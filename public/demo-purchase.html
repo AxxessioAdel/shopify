@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>Demo-Kauf durchführen</title>
+  <script type="module" src="../backend/checkout.js"></script>
+
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: 30px auto; }
+    label { display: block; margin-top: 10px; }
+    input { width: 100%; padding: 8px; margin-top: 5px; }
+    button { margin-top: 20px; padding: 10px 20px; }
+  </style>
+</head>
+<body>
+  <h1>Demo-Kauf</h1>
+
+  <form id="checkout-form">
+    <label>Empfängername:
+      <input type="text" id="name" required>
+    </label>
+
+    <label>E-Mail-Adresse:
+      <input type="email" id="email" value="ahmadi.adel2016@gmail.com" required>
+    </label>
+
+    <label>Mobilnummer:
+      <input type="text" id="phone" required>
+    </label>
+
+    <label>Grußtext:
+      <input type="text" id="message" required>
+    </label>
+
+    <label>Produkt-Variante (variantId):
+      <input type="text" id="variantId" value="gid://shopify/ProductVariant/51664838197512" required>
+    </label>
+
+    <p>Für wen ist die Karte?</p>
+    <label><input type="radio" name="recipient" value="ich" checked> Für mich</label><br>
+    <label><input type="radio" name="recipient" value="freund"> Für einen Freund</label><br><br>
+
+    <button type="submit">Jetzt kaufen</button>
+  </form>
+
+</body>
+</html>
