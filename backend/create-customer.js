@@ -27,8 +27,29 @@ document.addEventListener("DOMContentLoaded", () => {
       const result = await response.json();
 
       if (result.success) {
-        alert("✅ Kunde erfolgreich erstellt!");
-        window.location.href = "demo-purchase.html"; // Weiterleitung zur nächsten Seite
+        // ✅ Daten lokal speichern
+        localStorage.setItem(
+          "customerInfo",
+          JSON.stringify({
+            firstName: payload.firstName,
+            lastName: payload.lastName,
+            phone: payload.phone,
+            email: payload.email,
+          })
+        );
+
+        // ✅ Rückmeldung anzeigen
+        if (result.isNew !== undefined) {
+          const message = result.isNew
+            ? "✅ Kunde erfolgreich erstellt!"
+            : `ℹ️ Kunde existierte bereits: ${result.customer.id}`;
+          alert(message);
+        } else {
+          console.error("❌ Fehler: Ungültige Antwort vom Server.", result);
+        }
+
+        // Weiterleitung zur nächsten Seite
+        window.location.href = "demo-purchase.html";
       } else {
         alert("❌ Fehler: " + JSON.stringify(result.error));
         console.error("Fehlerdetails:", result);

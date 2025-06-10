@@ -5,6 +5,13 @@ import {
 } from "./checkout-handler.js";
 
 document.addEventListener("DOMContentLoaded", () => {
+  const info = JSON.parse(localStorage.getItem("customerInfo") || "{}");
+  if (info.firstName)
+    document.getElementById("name").value = `${info.firstName} ${
+      info.lastName || ""
+    }`;
+  if (info.phone) document.getElementById("phone").value = info.phone;
+  if (info.email) document.getElementById("email").value = info.email;
   const form = document.getElementById("checkout-form");
 
   form.addEventListener("submit", async (e) => {

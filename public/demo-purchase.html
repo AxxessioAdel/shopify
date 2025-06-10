@@ -21,7 +21,7 @@
     </label>
 
     <label>E-Mail-Adresse:
-      <input type="email" id="email" value="ahmadi.adel2016@gmail.com" required>
+      <input type="email" id="email" required>
     </label>
 
     <label>Mobilnummer:
@@ -43,5 +43,15 @@
     <button type="submit">Jetzt kaufen</button>
   </form>
 
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const customerInfo = JSON.parse(localStorage.getItem("customerInfo"));
+      if (customerInfo) {
+        document.getElementById("name").value = `${customerInfo.firstName} ${customerInfo.lastName}`;
+        document.getElementById("email").value = customerInfo.email;
+        document.getElementById("phone").value = customerInfo.phone;
+      }
+    });
+  </script>
 </body>
 </html>

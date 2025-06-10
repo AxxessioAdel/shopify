@@ -83,7 +83,19 @@
 
       const result = await response.json();
       if (result.success) {
-        alert("Kunde erfolgreich erstellt!");
+        const message = result.isNew
+          ? "✅ Kunde erfolgreich erstellt!"
+          : `ℹ️ Kunde existierte bereits: ${result.customer.id}`;
+        alert(message);
+        localStorage.setItem(
+          "customerInfo",
+          JSON.stringify({
+            firstName: payload.firstName,
+            lastName: payload.lastName,
+            email: payload.email,
+            phone: payload.phone,
+          })
+        );
         window.location.href = "demo-purchase.html";
       } else {
         alert("Fehler: " + JSON.stringify(result.error));

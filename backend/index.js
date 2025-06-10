@@ -5,21 +5,16 @@ import cors from "cors";
 import fs from "fs";
 
 dotenv.config();
-console.log("🔍 Überprüfung, ob .env existiert:", fs.existsSync("./.env"));
 
 const app = express();
 app.use(cors());
 app.use(express.json());
-
-// 👉 Unterstützung für direkten Zugriff auf JS-Dateien im /public-Verzeichnis
 app.use(express.static("public"));
 
 const ADMIN_TOKEN = process.env.SHOPIFY_ADMIN_TOKEN;
 const SHOP_DOMAIN = process.env.SHOPIFY_STORE_DOMAIN;
 
-console.log("🧪 SHOP_DOMAIN:", SHOP_DOMAIN);
-
-// 📌 API zum Erstellen eines Kunden (nur für die erste Phase)
+// 📌 API zum Erstellen oder Finden eines Kunden
 app.post("/api/createCustomer", async (req, res) => {
   const {
     email,
@@ -34,7 +29,6 @@ app.post("/api/createCustomer", async (req, res) => {
     country,
   } = req.body;
 
-  // Überprüfung auf fehlende Pflichtfelder
   if (!email || !firstName || !lastName || !phone || !password) {
     return res.status(400).json({
       success: false,
@@ -44,8 +38,42 @@ app.post("/api/createCustomer", async (req, res) => {
   }
 
   try {
-    // Anfrage an Shopify-API zum Erstellen eines Kunden
-    const shopifyResponse = await fetch(
+    const searchBy = async (field, value) => {
+      const searchParams = new URLSearchParams({ query: `${field}:${value}` });
+      const res = await fetch(
+        `https://${SHOP_DOMAIN}/admin/api/2025-04/customers/search.json?${searchParams.toString()}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Shopify-Access-Token": ADMIN_TOKEN,
+          },
+        }
+      );
+      return await res.json();
+    };
+
+    // 🔍 1. Suche nach Email
+    let searchData = await searchBy("email", email);
+
+    // 🔁 2. Falls nicht gefunden → Suche nach Telefonnummer
+    if (!searchData.customers || searchData.customers.length === 0) {
+      searchData = await searchBy("phone", phone);
+    }
+
+    // ✅ Kunde existiert → zurückgeben mit isNew: false
+    if (searchData.customers && searchData.customers.length > 0) {
+      const existingCustomer = searchData.customers[0];
+      console.log("ℹ️ Kunde existiert bereits:", existingCustomer.id);
+      return res.status(200).json({
+        success: true,
+        isNew: false,
+        customer: existingCustomer,
+      });
+    }
+
+    // 🆕 Kunde erstellen
+    const createResponse = await fetch(
       `https://${SHOP_DOMAIN}/admin/api/2025-04/customers.json`,
       {
         method: "POST",
@@ -80,28 +108,30 @@ app.post("/api/createCustomer", async (req, res) => {
       }
     );
 
-    const data = await shopifyResponse.json();
+    const createData = await createResponse.json();
 
-    // Erfolgreiche Antwort von Shopify
-    if (data.customer?.id) {
-      return res.status(200).json({ success: true, customer: data.customer });
+    if (createData.customer?.id) {
+      return res.status(200).json({
+        success: true,
+        isNew: true,
+        customer: createData.customer,
+      });
     } else {
-      // Fehlerhafte Antwort von Shopify
-      console.error("❌ Fehlerhafte Antwort von Shopify:", data);
-      return res
-        .status(400)
-        .json({ success: false, error: data.errors || data });
+      console.error("❌ Fehlerhafte Antwort von Shopify:", createData);
+      return res.status(400).json({
+        success: false,
+        error: createData.errors || createData,
+      });
     }
   } catch (err) {
-    // Fehler beim Erstellen des Kunden
-    console.error("❌ Fehler beim Kunden-Erstellen:", err);
-    return res
-      .status(500)
-      .json({ success: false, error: "Interner Serverfehler" });
+    console.error("❌ Fehler im Kunden-Workflow:", err);
+    return res.status(500).json({
+      success: false,
+      error: "Interner Serverfehler",
+    });
   }
 });
 
-// Starten des Servers auf Port 3000
 const PORT = 3000;
 app.listen(PORT, () => {
   console.log(`✅ Backend läuft auf http://localhost:${PORT}`);
