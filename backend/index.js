@@ -2,6 +2,7 @@ import express from "express";
 import fetch from "node-fetch";
 import dotenv from "dotenv";
 import cors from "cors";
+import { handleProductProvisioning } from "./product-provisioning.js";
 
 dotenv.config();
 
@@ -131,6 +132,8 @@ app.post("/api/createCustomer", async (req, res) => {
     });
   }
 });
+
+app.post("/api/product-provisioning", handleProductProvisioning);
 
 const PORT = 3000;
 app.listen(PORT, () => {
