@@ -4,6 +4,15 @@ import {
   getCheckoutUrl,
 } from "./checkout-handler.js";
 
+const CONTENT_TYPE =
+  window.ENV && window.ENV.CONTENT_TYPE
+    ? window.ENV.CONTENT_TYPE
+    : "application/json";
+const CUSTOM_CHECKOUT_APP_TOKEN =
+  window.ENV && window.ENV.CUSTOM_CHECKOUT_APP_TOKEN
+    ? window.ENV.CUSTOM_CHECKOUT_APP_TOKEN
+    : "6e37ff37b5f96a6df92a41f64534b90d";
+
 document.addEventListener("DOMContentLoaded", () => {
   const info = JSON.parse(localStorage.getItem("customerInfo") || "{}");
   if (info.firstName)

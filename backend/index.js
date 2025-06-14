@@ -2,7 +2,6 @@ import express from "express";
 import fetch from "node-fetch";
 import dotenv from "dotenv";
 import cors from "cors";
-import fs from "fs";
 
 dotenv.config();
 
@@ -11,8 +10,9 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static("public"));
 
-const ADMIN_TOKEN = process.env.SHOPIFY_ADMIN_TOKEN;
+const ADMIN_TOKEN = process.env.CUSTOM_CHECKOUT_APP_ADMIN_API_TOKEN;
 const SHOP_DOMAIN = process.env.SHOPIFY_STORE_DOMAIN;
+const CONTENT_TYPE = process.env.CONTENT_TYPE;
 
 // 📌 API zum Erstellen oder Finden eines Kunden
 app.post("/api/createCustomer", async (req, res) => {
@@ -45,7 +45,7 @@ app.post("/api/createCustomer", async (req, res) => {
         {
           method: "GET",
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": CONTENT_TYPE,
             "X-Shopify-Access-Token": ADMIN_TOKEN,
           },
         }
@@ -78,7 +78,7 @@ app.post("/api/createCustomer", async (req, res) => {
       {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": CONTENT_TYPE,
           "X-Shopify-Access-Token": ADMIN_TOKEN,
         },
         body: JSON.stringify({

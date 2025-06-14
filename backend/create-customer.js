@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       const response = await fetch("http://localhost:3000/api/createCustomer", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": CONTENT_TYPE },
         body: JSON.stringify(payload),
       });
 
@@ -60,3 +60,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
+
+const CONTENT_TYPE = window.ENV && window.ENV.CONTENT_TYPE ? window.ENV.CONTENT_TYPE : 'application/json';
+const CUSTOM_CHECKOUT_APP_TOKEN = window.ENV && window.ENV.CUSTOM_CHECKOUT_APP_TOKEN ? window.ENV.CUSTOM_CHECKOUT_APP_TOKEN : '6e37ff37b5f96a6df92a41f64534b90d';

@@ -1,3 +1,6 @@
+const CONTENT_TYPE = 'application/json';
+const STOREFRONT_ACCESS_TOKEN = '6e37ff37b5f96a6df92a41f64534b90d';
+
 export async function createCart() {
   const query = `
     mutation {
@@ -9,18 +12,26 @@ export async function createCart() {
       }
     }
   `;
+  const body = JSON.stringify({ query });
+  console.log("[createCart] Request body:", body);
   const response = await fetch(
     "https://vrr7x3-ab.myshopify.com/api/2024-04/graphql.json",
     {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
-        "X-Shopify-Storefront-Access-Token": "<Access-Token>",
+        "Content-Type": CONTENT_TYPE,
+        "X-Shopify-Storefront-Access-Token": STOREFRONT_ACCESS_TOKEN,
       },
-      body: JSON.stringify({ query }),
+      body,
     }
   );
   const data = await response.json();
+  if (!data.data || !data.data.cartCreate || !data.data.cartCreate.cart) {
+    console.error("Shopify createCart error response:", data);
+    throw new Error(
+      data.errors?.[0]?.message || data.errors || "Fehler beim Erstellen des Warenkorbs (createCart)."
+    );
+  }
   return data.data.cartCreate.cart;
 }
 
@@ -48,18 +59,26 @@ export async function addProductToCart(cartId, merchandiseId, attributes = []) {
       },
     ],
   };
+  const body = JSON.stringify({ query, variables });
+  console.log("[addProductToCart] Request body:", body);
   const response = await fetch(
     "https://vrr7x3-ab.myshopify.com/api/2024-04/graphql.json",
     {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
-        "X-Shopify-Storefront-Access-Token": "<Access-Token>",
+        "Content-Type": CONTENT_TYPE,
+        "X-Shopify-Storefront-Access-Token": STOREFRONT_ACCESS_TOKEN,
       },
-      body: JSON.stringify({ query, variables }),
+      body,
     }
   );
   const data = await response.json();
+  if (!data.data || !data.data.cartLinesAdd || !data.data.cartLinesAdd.cart) {
+    console.error("Shopify addProductToCart error response:", data);
+    throw new Error(
+      data.errors?.[0]?.message || data.errors || "Fehler beim Hinzufügen zum Warenkorb (addProductToCart)."
+    );
+  }
   return data.data.cartLinesAdd.cart;
 }
 
@@ -72,17 +91,25 @@ export async function getCheckoutUrl(cartId) {
     }
   `;
   const variables = { cartId };
+  const body = JSON.stringify({ query, variables });
+  console.log("[getCheckoutUrl] Request body:", body);
   const response = await fetch(
     "https://vrr7x3-ab.myshopify.com/api/2024-04/graphql.json",
     {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
-        "X-Shopify-Storefront-Access-Token": "<Access-Token>",
+        "Content-Type": CONTENT_TYPE,
+        "X-Shopify-Storefront-Access-Token": STOREFRONT_ACCESS_TOKEN,
       },
-      body: JSON.stringify({ query, variables }),
+      body,
     }
   );
   const data = await response.json();
+  if (!data.data || !data.data.cart || !data.data.cart.checkoutUrl) {
+    console.error("Shopify getCheckoutUrl error response:", data);
+    throw new Error(
+      data.errors?.[0]?.message || data.errors || "Fehler beim Abrufen der Checkout-URL."
+    );
+  }
   return data.data.cart.checkoutUrl;
 }
