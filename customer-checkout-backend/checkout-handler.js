@@ -1,5 +1,5 @@
-const CONTENT_TYPE = 'application/json';
-const STOREFRONT_ACCESS_TOKEN = '<Access-Token>';
+const CONTENT_TYPE = "application/json";
+const STOREFRONT_ACCESS_TOKEN = "<STOREFRONT_ACCESS_TOKEN>";
 
 export async function createCart() {
   const query = `
@@ -29,7 +29,9 @@ export async function createCart() {
   if (!data.data || !data.data.cartCreate || !data.data.cartCreate.cart) {
     console.error("Shopify createCart error response:", data);
     throw new Error(
-      data.errors?.[0]?.message || data.errors || "Fehler beim Erstellen des Warenkorbs (createCart)."
+      data.errors?.[0]?.message ||
+        data.errors ||
+        "Fehler beim Erstellen des Warenkorbs (createCart)."
     );
   }
   return data.data.cartCreate.cart;
@@ -76,7 +78,9 @@ export async function addProductToCart(cartId, merchandiseId, attributes = []) {
   if (!data.data || !data.data.cartLinesAdd || !data.data.cartLinesAdd.cart) {
     console.error("Shopify addProductToCart error response:", data);
     throw new Error(
-      data.errors?.[0]?.message || data.errors || "Fehler beim Hinzufügen zum Warenkorb (addProductToCart)."
+      data.errors?.[0]?.message ||
+        data.errors ||
+        "Fehler beim Hinzufügen zum Warenkorb (addProductToCart)."
     );
   }
   return data.data.cartLinesAdd.cart;
@@ -108,7 +112,9 @@ export async function getCheckoutUrl(cartId) {
   if (!data.data || !data.data.cart || !data.data.cart.checkoutUrl) {
     console.error("Shopify getCheckoutUrl error response:", data);
     throw new Error(
-      data.errors?.[0]?.message || data.errors || "Fehler beim Abrufen der Checkout-URL."
+      data.errors?.[0]?.message ||
+        data.errors ||
+        "Fehler beim Abrufen der Checkout-URL."
     );
   }
   return data.data.cart.checkoutUrl;

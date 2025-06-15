@@ -1,8 +1,11 @@
+// customer-checkout-customer-checkout-backend/index.js
+// Dieses Backend ermöglicht es, Kunden zu erstellen oder zu finden,
+// um sie für den Checkout-Prozess in Shopify zu verwenden.
+
 import express from "express";
 import fetch from "node-fetch";
 import dotenv from "dotenv";
 import cors from "cors";
-import { handleProductProvisioning } from "./product-provisioning.js";
 
 dotenv.config();
 
@@ -14,6 +17,7 @@ app.use(express.static("public"));
 const ADMIN_TOKEN = process.env.CUSTOM_CHECKOUT_APP_ADMIN_API_TOKEN;
 const SHOP_DOMAIN = process.env.SHOPIFY_STORE_DOMAIN;
 const CONTENT_TYPE = process.env.CONTENT_TYPE;
+const PORT = process.env.CUSTOM_CHECKOUT_PORT;
 
 // 📌 API zum Erstellen oder Finden eines Kunden
 app.post("/api/createCustomer", async (req, res) => {
@@ -133,9 +137,6 @@ app.post("/api/createCustomer", async (req, res) => {
   }
 });
 
-app.post("/api/product-provisioning", handleProductProvisioning);
-
-const PORT = 3000;
 app.listen(PORT, () => {
   console.log(`✅ Backend läuft auf http://localhost:${PORT}`);
 });

@@ -61,5 +61,11 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-const CONTENT_TYPE = window.ENV && window.ENV.CONTENT_TYPE ? window.ENV.CONTENT_TYPE : 'application/json';
-const CUSTOM_CHECKOUT_APP_TOKEN = window.ENV && window.ENV.CUSTOM_CHECKOUT_APP_TOKEN ? window.ENV.CUSTOM_CHECKOUT_APP_TOKEN : '6e37ff37b5f96a6df92a41f64534b90d';
+const CONTENT_TYPE =
+  window.ENV && window.ENV.CONTENT_TYPE
+    ? window.ENV.CONTENT_TYPE
+    : "application/json";
+const CUSTOM_CHECKOUT_APP_TOKEN =
+  window.ENV && window.ENV.CUSTOM_CHECKOUT_APP_TOKEN
+    ? window.ENV.CUSTOM_CHECKOUT_APP_TOKEN
+    : "<STOREFRONT_ACCESS_TOKEN>";

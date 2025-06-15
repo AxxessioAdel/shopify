@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>Product Provisioning Test</title>
+</head>
+<body>
+  <h1>Product Provisioning Simulator</h1>
+  <button id="runTest">Jetzt Test ausführen</button>
+
+  <script>
+    document.getElementById("runTest").addEventListener("click", async () => {
+      const testPayload = {
+        title: "Autogrammkarte Messi",
+        description: "Limitierte Auflage",
+        vendor: "FC Barcelona",
+        product_type: "Autogrammkarte",
+        tags: ["Autogramm", "Deluxe", "Messi"],
+        images: [
+          {
+            src: "https://res.cloudinary.com/dhrq96tlr/image/upload/v1749979271/box_dejf0a.png",
+            alt: "Autogrammkarte Messi"
+          }
+        ],
+        pricing_groups: [
+          { name: "Standard", price: "29.99" },
+          { name: "Deluxe", price: "59.99" }
+        ]
+      };
+
+      try {
+        // Achtung: Richtiger API-Endpunkt mit Port 3001
+        const response = await fetch("http://localhost:3001/api/product-provisioning", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(testPayload)
+        });
+
+        const result = await response.json();
+        console.log("✅ Browser Simulation erfolgreich:", result);
+        alert("Test erfolgreich abgeschlossen!");
+      } catch (error) {
+        console.error("❌ Fehler im Browser-Test:", error);
+        alert("Fehler im Browser-Test.");
+      }
+    });
+  </script>
+</body>
+</html>
