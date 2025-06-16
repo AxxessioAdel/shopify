@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Produkt erstellen</title>
+  <style>
+    #message {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+    #message.success {
+      color: green;
+    }
+    #message.error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <h1>Produkt erstellen</h1>
+
+  <form id="createProductForm">
+    <label>Title: <input type="text" id="title" required value="Autogrammkarte Messi" /></label><br />
+    <label>Description: <input type="text" id="description" required value="Limitierte Auflage" /></label><br />
+    <label>Vendor: <input type="text" id="vendor" required value="FC Barcelona" /></label><br />
+    <label>Product Type: <input type="text" id="product_type" required value="Autogrammkarte" /></label><br />
+    <label>Tags (comma separated): <input type="text" id="tags" value="Autogramm,Deluxe,Messi" /></label><br />
+    <label>Image URL: <input type="text" id="image" required value="https://res.cloudinary.com/dhrq96tlr/image/upload/v1749979271/box_dejf0a.png" /></label><br />
+    
+    <h3>Pricing Groups:</h3>
+    <div id="pricingGroupsContainer">
+      <div class="pricingGroup">
+        <label>Group Name: <input type="text" class="group-name" required value="Standard" /></label>
+        <label>Price: <input type="number" class="group-price" required value="29.99" /></label>
+      </div>
+      <div class="pricingGroup">
+        <label>Group Name: <input type="text" class="group-name" required value="Deluxe" /></label>
+        <label>Price: <input type="number" class="group-price" required value="59.99" /></label>
+      </div>
+    </div>
+
+    <button type="button" id="addPricingGroup">➕ Add Pricing Group</button><br /><br />
+
+    <button type="button" id="previewButton">👀 Preview Product</button>
+    <button type="button" id="sendButton">🚀 Produkt jetzt anlegen</button>
+  </form>
+
+  <h2>📦 Preview:</h2>
+  <pre id="previewOutput"></pre>
+
+  <div id="message"></div>
+
+  <script src="js/utils.js"></script>
+
+  <script>
+    let latestPayload = null;
+
+    document.getElementById("addPricingGroup").addEventListener("click", () => {
+      const container = document.getElementById("pricingGroupsContainer");
+      const newGroup = document.createElement("div");
+      newGroup.classList.add("pricingGroup");
+      newGroup.innerHTML = `
+        <label>Group Name: <input type="text" class="group-name" required /></label>
+        <label>Price: <input type="number" class="group-price" required /></label>
+      `;
+      container.appendChild(newGroup);
+    });
+
+    document.getElementById("previewButton").addEventListener("click", () => {
+      const payload = buildPayloadFromForm();
+      latestPayload = payload;
+      document.getElementById("previewOutput").textContent = JSON.stringify(payload, null, 2);
+      showMessage("Produktdaten erfolgreich vorbereitet. Bitte prüfen!", "success");
+    });
+
+    document.getElementById("sendButton").addEventListener("click", async () => {
+      if (!latestPayload) {
+        showMessage("Bitte zuerst Preview durchführen!", "error");
+        return;
+      }
+
+      disableButtons(true);
+
+      try {
+        const response = await fetch("http://localhost:3002/simulate-webhook", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(latestPayload)
+        });
+
+        const result = await response.json();
+        console.log("✅ Webhook erfolgreich ausgelöst:", result);
+        showMessage("✅ Produkt erfolgreich an Shopify übermittelt!", "success");
+        resetForm();
+      } catch (error) {
+        console.error("❌ Fehler beim Webhook:", error);
+        showMessage("❌ Fehler beim Webhook senden.", "error");
+      } finally {
+        disableButtons(false);
+      }
+    });
+
+    function showMessage(message, type) {
+      const msgElem = document.getElementById("message");
+      msgElem.textContent = message;
+      msgElem.className = type;
+    }
+
+    function disableButtons(state) {
+      document.getElementById("sendButton").disabled = state;
+      document.getElementById("previewButton").disabled = state;
+    }
+
+    function resetForm() {
+      document.getElementById("createProductForm").reset();
+      document.getElementById("pricingGroupsContainer").innerHTML = `
+        <div class="pricingGroup">
+          <label>Group Name: <input type="text" class="group-name" required /></label>
+          <label>Price: <input type="number" class="group-price" required /></label>
+        </div>`;
+      document.getElementById("previewOutput").textContent = "";
+      latestPayload = null;
+    }
+  </script>
+
+</body>
+</html>
