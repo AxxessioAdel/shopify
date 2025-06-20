@@ -3,7 +3,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
-import fetch from "node-fetch"; // اضافه شد برای فراخوانی به Shopify API
+import fetch from "node-fetch";
 import { handleProductSync } from "./shopify-product-sync.js";
 
 dotenv.config();

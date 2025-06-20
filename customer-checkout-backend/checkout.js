@@ -11,7 +11,7 @@ const CONTENT_TYPE =
 const CUSTOM_CHECKOUT_APP_TOKEN =
   window.ENV && window.ENV.CUSTOM_CHECKOUT_APP_TOKEN
     ? window.ENV.CUSTOM_CHECKOUT_APP_TOKEN
-    : "<STOREFRONT_ACCESS_TOKEN>";
+    : "6e37ff37b5f96a6df92a41f64534b90d";
 
 document.addEventListener("DOMContentLoaded", () => {
   const info = JSON.parse(localStorage.getItem("customerInfo") || "{}");

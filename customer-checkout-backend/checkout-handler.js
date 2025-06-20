@@ -1,5 +1,5 @@
 const CONTENT_TYPE = "application/json";
-const STOREFRONT_ACCESS_TOKEN = "<STOREFRONT_ACCESS_TOKEN>";
+const STOREFRONT_ACCESS_TOKEN = "6e37ff37b5f96a6df92a41f64534b90d";
 
 export async function createCart() {
   const query = `

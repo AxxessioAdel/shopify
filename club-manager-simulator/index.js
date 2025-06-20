@@ -1,19 +1,41 @@
 import express from "express";
 import dotenv from "dotenv";
-import fetch from "node-fetch";
 import cors from "cors";
+import ordersPaidWebhook from "./webhooks/ordersPaidWebhook.js";
+import paymentConfirmation from "./routes/paymentConfirmation.js";
+
 dotenv.config();
 
 const app = express();
-app.use(cors());
-app.use(express.json());
 
-// Konfiguration für Zielendpoint
+// Load .env variable
+const PORT = process.env.CLUB_MANAGER_PORT || 3002;
 const PROVISIONING_API_URL =
   process.env.PROVISIONING_API_URL ||
   "http://localhost:3001/api/product-provisioning";
 
-// Route zur manuellen Webhook-Simulation
+// CORS support
+app.use(cors());
+
+// 🟢 Raw body parser MUST come first before JSON parser
+app.use(
+  "/webhooks",
+  express.raw({
+    type: "application/json",
+    verify: (req, res, buf) => {
+      req.rawBody = buf;
+    },
+  })
+);
+
+// Then regular JSON parser for everything else
+app.use(express.json());
+
+// Routes
+app.use("/api", paymentConfirmation);
+app.use("/webhooks", ordersPaidWebhook);
+
+// Simulation route for testing
 app.post("/simulate-webhook", async (req, res) => {
   const payload = {
     title: "Autogrammkarte Messi",
@@ -41,18 +63,15 @@ app.post("/simulate-webhook", async (req, res) => {
     });
 
     const result = await response.json();
-    console.log(
-      "✅ Webhook erfolgreich gesendet:",
-      JSON.stringify(result, null, 2)
-    );
+    console.log("✅ Webhook erfolgreich gesendet:", result);
     res.status(200).json(result);
   } catch (error) {
-    console.error("❌ Fehler beim Senden des Webhooks:", error);
+    console.error("❌ Fehler beim Senden des Webhooks:", error.message);
     res.status(500).json({ error: "Fehler bei der Webhook-Simulation" });
   }
 });
 
-const PORT = process.env.CLUB_MANAGER_PORT || 3002;
+// Start server
 app.listen(PORT, () => {
   console.log(`✅ Club Manager Simulator läuft auf http://localhost:${PORT}`);
 });

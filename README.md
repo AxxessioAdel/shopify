@@ -69,6 +69,15 @@ project-root/
 │ ├── index.js
 │ └── .env
 │
+├───club-manager-simulator-ui/
+│ └── (Frontend for Product Management)
+│ ├── create-product.html
+│ ├── update-product.html
+│ ├── js/
+│ │ ├── api-client.js
+│ │ └── utils.js
+│ └── index.html
+│
 └───public/
 └── (Frontend Demo for Customer Creation and Purchase)
 ```
@@ -198,6 +207,24 @@ Club Manager → Webhook → Product Provisioning Service → Shopify Admin API 
 
 - Products appear immediately in the Shopify store.
 - Customers can purchase them instantly.
+
+---
+
+## 🛠 Club Manager Simulator UI
+
+### Features
+
+1️⃣ **Create Products**
+
+- A user-friendly interface for creating new products.
+- Supports adding product details, variants, and tags.
+- Sends data to the backend for Shopify Admin API integration.
+
+2️⃣ **Update Products**
+
+- Allows editing existing products.
+- Dynamically loads product details, including variants.
+- Supports previewing changes before updating.
 
 ---
 
