@@ -5,7 +5,7 @@ dotenv.config();
 
 // Admin API Konfiguration
 const SHOPIFY_API_URL = `https://${process.env.SHOPIFY_STORE_DOMAIN}/admin/api/2025-04/webhooks.json`;
-const SHOPIFY_ADMIN_API_TOKEN = process.env.CUSTOM_CHECKOUT_APP_ADMIN_API_TOKEN; // Korrigiert: Variable aus Umgebungsvariable SHOPIFY_ADMIN_API_TOKEN
+const SHOPIFY_ADMIN_API_TOKEN = process.env.CUSTOM_CHECKOUT_APP_ADMIN_API_TOKEN;
 
 // Print the token for debugging purposes
 console.log("[DEBUG] SHOPIFY_ADMIN_API_TOKEN:", SHOPIFY_ADMIN_API_TOKEN);

@@ -1,7 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
-import ordersPaidWebhook from "./webhooks/ordersPaidWebhook.js";
 import paymentConfirmation from "./routes/paymentConfirmation.js";
 
 dotenv.config();
@@ -13,6 +12,8 @@ const PORT = process.env.CLUB_MANAGER_PORT || 3002;
 const PROVISIONING_API_URL =
   process.env.PROVISIONING_API_URL ||
   "http://localhost:3001/api/product-provisioning";
+
+const useWebhook = process.env.USE_WEBHOOK === "true";
 
 // CORS support
 app.use(cors());
@@ -33,7 +34,23 @@ app.use(express.json());
 
 // Routes
 app.use("/api", paymentConfirmation);
-app.use("/webhooks", ordersPaidWebhook);
+
+if (useWebhook) {
+  import("./webhooks/ordersPaidWebhook.js").then(
+    ({ default: ordersPaidWebhook }) => {
+      app.use("/webhooks", ordersPaidWebhook);
+      console.log("[Server] Webhook route aktiviert.");
+    }
+  );
+} else {
+  console.log("[Server] Webhook deaktiviert. Nutze stattdessen API-Modus.");
+  import("./api/triggerPaymentSync.js").then(({ default: triggerSync }) => {
+    app.get("/sync/payments", async (req, res) => {
+      const result = await triggerSync();
+      res.status(200).json(result);
+    });
+  });
+}
 
 // Simulation route for testing
 app.post("/simulate-webhook", async (req, res) => {

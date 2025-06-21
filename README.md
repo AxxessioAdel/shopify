@@ -1,22 +1,22 @@
-# Shopify Product Provisioning & Checkout Headless Integration
+# Shopify Produktbereitstellung & Headless Checkout Integration
 
 ---
 
-This project provides a complete headless integration between Club Manager, Shopify, and a web frontend.
+Dieses Projekt bietet eine vollständige Headless-Integration zwischen Club Manager, Shopify und einem Web-Frontend.
 
-It consists of two independent modules:
+Es besteht aus zwei unabhängigen Modulen:
 
-1️⃣ **Product Provisioning Service (Integration Backend)**
+1️⃣ **Produktbereitstellungsdienst (Integration Backend)**
 
-- Automatically creates products in Shopify based on webhooks from Club Manager.
+- Erstellt automatisch Produkte in Shopify basierend auf Webhooks vom Club Manager.
 
-2️⃣ **Customer Checkout Service (Customer Checkout Backend)**
+2️⃣ **Kunden-Checkout-Service (Customer Checkout Backend)**
 
-- End-to-end test environment for customer creation, cart handling, and checkout process via Storefront API.
+- End-to-End-Testumgebung für Kundenerstellung, Warenkorb und Checkout-Prozess über die Storefront API.
 
 ---
 
-## 📦 Repository Overview
+## 📦 Repository Übersicht
 
 ```
 git@github.com:AxxessioAdel/shopify.git
@@ -24,79 +24,144 @@ git@github.com:AxxessioAdel/shopify.git
 
 ---
 
-## ⚙️ System Overview
+## ⚙️ Systemübersicht
 
-- Headless Shopify integration via Admin API (Product Provisioning).
-- Shopify Storefront API for checkout demo.
-- Webhook-based product synchronization via Club Manager.
-- Separate backends for provisioning and checkout.
-- Local simulation capabilities via Club Manager Simulator.
-
----
-
-## 📋 Prerequisites
-
-- Node.js v18+ (required for ESModules and node-fetch).
-- A Shopify store (minimum Basic Plan).
-- Access to Shopify Admin API with the following permissions:
-  - Products (read and write).
-  - Product Variants (read and write).
-- Club Manager access (for future live integration).
-- ngrok (for Webhook Public Deployment).
-- Git.
+- Headless Shopify-Integration über die Admin API (Produktbereitstellung)
+- Shopify Storefront API für Checkout-Demo
+- Webhook-basierte Produktsynchronisation via Club Manager
+- Separate Backends für Provisionierung und Checkout
+- Lokale Simulationsmöglichkeiten über den Club Manager Simulator
 
 ---
 
-## 🔧 Project Structure
+## 📋 Voraussetzungen
+
+- Node.js v18+ (erforderlich für ESModules und node-fetch)
+- Ein Shopify-Store (mindestens Basic-Plan)
+- Zugriff auf die Shopify Admin API mit folgenden Berechtigungen:
+  - Produkte (Lesen & Schreiben)
+  - Produktvarianten (Lesen & Schreiben)
+- Club Manager Zugang (für zukünftige Live-Integration)
+- ngrok (für öffentliche Webhook-Bereitstellung)
+- Git
+
+---
+
+## 🔧 Projektstruktur
 
 ```
-project-root/
-│ .gitignore
-│ package.json (main directory for meta management)
+.gitignore
+Berichten.md
+package-lock.json
+package.json
+README.md
+
+club-manager-simulator/
+│   .env
+│   index.js
+│   package-lock.json
+│   package.json
 │
-├───customer-checkout-backend/
-│ └── (Checkout Flow via Storefront API)
+├───routes/
+│       paymentConfirmation.js
 │
-├───integration-backend/
-│ └── (Shopify Product Provisioning Service)
-│ ├── index.js
-│ ├── shopify-product-sync.js
-│ ├── product-sync-simulator.js
-│ └── .env
+├───utils/
+│       clubManagerApiClient.js
 │
-├───club-manager-simulator/
-│ └── (Local Webhook Test Environment)
-│ ├── index.js
-│ └── .env
+└───webhooks/
+        ordersPaidWebhook.js
+
+club-manager-simulator-ui/
+│   create-product.html
+│   index.html
+│   update-product.html
 │
-├───club-manager-simulator-ui/
-│ └── (Frontend for Product Management)
-│ ├── create-product.html
-│ ├── update-product.html
-│ ├── js/
-│ │ ├── api-client.js
-│ │ └── utils.js
-│ └── index.html
-│
-└───public/
-└── (Frontend Demo for Customer Creation and Purchase)
+└───js/
+        api-client.js
+        utils.js
+
+customer-checkout-backend/
+    .env
+    checkout-handler.js
+    checkout.js
+    create-customer.js
+    index.js
+    product-provisioning.js
+    test-simulator.js
+
+integration-backend/
+    .env
+    index.js
+    product-sync-simulator.js
+    registerWebhook.js
+    shopify-product-sync.js
+
+public/
+    create-customer.html
+    demo-purchase.html
+    script.js
+    test-product.html
 ```
+
+---
+
+### Bereichs- und Dateibeschreibungen
+
+#### Projekt-Root
+
+- `.gitignore`, `package.json`, `package-lock.json`, `README.md`, `Berichten.md`: Konfigurations- und Dokumentationsdateien für das gesamte Projekt.
+
+#### club-manager-simulator
+
+- **index.js**: Startpunkt und Server für den Club Manager Simulator.
+- **.env**: Umgebungsvariablen für den Simulator.
+- **routes/paymentConfirmation.js**: Route für Zahlungsbestätigungen.
+- **utils/clubManagerApiClient.js**: Hilfsfunktionen für die Kommunikation mit der Club Manager API.
+- **webhooks/ordersPaidWebhook.js**: Webhook-Handler für eingehende Zahlungsbenachrichtigungen von Shopify.
+
+#### club-manager-simulator-ui
+
+- **index.html, create-product.html, update-product.html**: Benutzeroberfläche zur Produktverwaltung.
+- **js/api-client.js**: API-Client für Backend-Kommunikation.
+- **js/utils.js**: UI-Hilfsfunktionen.
+
+#### customer-checkout-backend
+
+- **index.js**: Einstiegspunkt für den Checkout-Backend-Server.
+- **.env**: Umgebungsvariablen.
+- **checkout.js, checkout-handler.js**: Checkout-Logik und Handler.
+- **create-customer.js**: Anlage neuer Kunden in Shopify.
+- **product-provisioning.js**: Produktbereitstellung für den Checkout.
+- **test-simulator.js**: Test- und Simulationswerkzeuge für den Checkout-Prozess.
+
+#### integration-backend
+
+- **index.js**: Einstiegspunkt für den Produktbereitstellungsservice.
+- **.env**: Umgebungsvariablen.
+- **shopify-product-sync.js**: Synchronisation von Produkten mit Shopify.
+- **product-sync-simulator.js**: Test-Simulator für die Produktsynchronisation.
+- **registerWebhook.js**: Registrierung und Verwaltung von Webhooks in Shopify.
+
+#### public
+
+- **create-customer.html, demo-purchase.html, test-product.html**: Demo-Seiten für Kundenanlage und Testkäufe.
+- **script.js**: Clientseitige Skripte für die Demo-Seiten.
 
 ---
 
 ## 🛠 Installation & Setup
 
-### 1️⃣ Basic Installation per Service
+### 1️⃣ Grundinstallation pro Service
 
-Navigate to the respective subdirectories and run:
+Navigiere in die jeweiligen Unterverzeichnisse und führe aus:
 
 ```bash
 npm install
 ```
 
-**Note:** Each service has its own `package.json`.
+**Hinweis:** Jeder Service hat eine eigene `package.json`.
 
-### 2️⃣ Configure `.env` Files
+### 2️⃣ `.env`-Dateien konfigurieren
 
 #### integration-backend/.env
 
@@ -114,23 +179,23 @@ CLUB_MANAGER_PORT=3002
 
 ---
 
-## 🚀 Local Startup Sequence
+## 🚀 Lokale Startreihenfolge
 
-1️⃣ Start Integration Backend:
+1️⃣ Integration Backend starten:
 
 ```bash
 cd integration-backend
 node index.js
 ```
 
-2️⃣ Start Club Manager Simulator:
+2️⃣ Club Manager Simulator starten:
 
 ```bash
 cd club-manager-simulator
 node index.js
 ```
 
-3️⃣ Trigger Test Webhooks:
+3️⃣ Test-Webhooks auslösen:
 
 ```bash
 Invoke-WebRequest -Method POST http://localhost:3002/simulate-webhook
@@ -140,38 +205,38 @@ Invoke-WebRequest -Method POST http://localhost:3002/simulate-webhook
 
 ## 🌐 Webhook Public Deployment & Live Integration
 
-### Goal
+### Ziel
 
-The Product Provisioning Service must be publicly accessible for Club Manager to trigger webhooks whenever a pricing group is saved.
+Der Produktbereitstellungsdienst muss öffentlich erreichbar sein, damit Club Manager Webhooks auslösen kann, sobald eine Preisgruppe gespeichert wird.
 
 ---
 
-### 1️⃣ Local Deployment with ngrok (for Integration Tests & Demo)
+### 1️⃣ Lokale Bereitstellung mit ngrok (für Integrationstests & Demo)
 
 #### a) ngrok Setup
 
-- Install ngrok: [https://ngrok.com/download](https://ngrok.com/download).
-- Authenticate your account:
+- Installiere ngrok: [https://ngrok.com/download](https://ngrok.com/download)
+- Authentifiziere deinen Account:
 
 ```bash
 ngrok config add-authtoken <YOUR_AUTH_TOKEN>
 ```
 
-#### b) Start ngrok Tunnel
+#### b) ngrok Tunnel starten
 
 ```bash
 ngrok http 3001
 ```
 
-ngrok generates a public URL, e.g.:
+ngrok erzeugt eine öffentliche URL, z.B.:
 
 ```
 https://abcd-1234.ngrok-free.app
 ```
 
-#### c) Webhook Endpoint for Club Manager
+#### c) Webhook-Endpunkt für Club Manager
 
-This endpoint is provided to Club Manager:
+Dieser Endpunkt wird dem Club Manager bereitgestellt:
 
 ```
 https://abcd-1234.ngrok-free.app/api/product-provisioning
@@ -179,88 +244,140 @@ https://abcd-1234.ngrok-free.app/api/product-provisioning
 
 ---
 
-## 🧭 Architecture Overview
+## 📤 Webhook für Zahlungsbestätigung (orders/paid)
 
-### End-to-End Workflow
+1️⃣ **Aktivierung des Webhooks im Shopify Admin**
+
+Gehe im Shopify Admin zu:
+
+    Einstellungen → Benachrichtigungen → Webhooks
+    Klicke auf „Webhook erstellen“
+
+- Wähle als Ereignis: **Order payment (orders/paid)**
+- Setze das Format auf **JSON**
+- Füge als URL folgendes ein (von ngrok erzeugt):
+
+  https://xyz123.ngrok-free.app/webhooks/orders-paid
+
+💡 Hinweis: Diese URL ändert sich bei jedem Neustart von ngrok!
+
+2️⃣ **Verwendung von ngrok**
+
+Vor jedem Test muss ein neuer öffentlicher Tunnel zu deinem lokalen Server gestartet werden:
+
+```bash
+ngrok http 3002
+```
+
+- Notiere die öffentliche URL
+- Aktualisiere die Webhook-URL im Shopify Admin (siehe oben)
+
+3️⃣ **Datenfluss bei erfolgreicher Zahlung**
+
+Sobald ein Kunde einen Kauf abgeschlossen hat:
+
+- Shopify sendet einen Webhook an `/webhooks/orders-paid`
+- Der Server empfängt die Bestellung und prüft die HMAC-Signatur
+- Bei `financial_status === "paid"` werden die Daten an Club Manager weitergeleitet
+
+**Beispielausgabe im Terminal bei erfolgreichem Ablauf:**
 
 ```
-Club Manager → Webhook → Product Provisioning Service → Shopify Admin API → Shopify Store
+[Webhook] Order #1039 () verarbeitet.
+[Webhook] Zahlungsstatus ist "paid". Sende Daten an Club Manager...
+[ClubManager] Zahlungsdaten empfangen: {
+  order_id: 7280665002248,
+  email: '',
+  phone: '+4917658869339',
+  total_price: '9.95',
+  ...
+}
 ```
 
-### Detailed Flow
+---
 
-1️⃣ **Product Management in Club Manager**
+## 🧭 Architekturübersicht
 
-- Pricing group is saved.
-- Webhook is triggered.
+### End-to-End-Workflow
 
-2️⃣ **Webhook Reception**
+```
+Club Manager → Webhook → Produktbereitstellungsdienst → Shopify Admin API → Shopify Store
+```
 
-- Club Manager sends product data via webhook to the Product Provisioning Service.
+### Detaillierter Ablauf
 
-3️⃣ **Product Synchronization**
+1️⃣ **Produktverwaltung im Club Manager**
 
-- The Product Provisioning Service transforms the data into Shopify Admin API format.
-- Product is created in Shopify, including variants, tags, and images.
+- Preisgruppe wird gespeichert.
+- Webhook wird ausgelöst.
 
-4️⃣ **Product Live in Store**
+2️⃣ **Webhook-Empfang**
 
-- Products appear immediately in the Shopify store.
-- Customers can purchase them instantly.
+- Club Manager sendet Produktdaten per Webhook an den Produktbereitstellungsdienst.
+
+3️⃣ **Produktsynchronisation**
+
+- Der Produktbereitstellungsdienst transformiert die Daten ins Shopify Admin API-Format.
+- Produkt wird in Shopify erstellt, inkl. Varianten, Tags und Bildern.
+
+4️⃣ **Produkt live im Store**
+
+- Produkte erscheinen sofort im Shopify-Store.
+- Kunden können sie direkt kaufen.
 
 ---
 
 ## 🛠 Club Manager Simulator UI
 
-### Features
+### Funktionen
 
-1️⃣ **Create Products**
+1️⃣ **Produkte erstellen**
 
-- A user-friendly interface for creating new products.
-- Supports adding product details, variants, and tags.
-- Sends data to the backend for Shopify Admin API integration.
+- Benutzerfreundliche Oberfläche zum Anlegen neuer Produkte.
+- Unterstützt das Hinzufügen von Produktdetails, Varianten und Tags.
+- Sendet Daten ans Backend zur Shopify-Integration.
 
-2️⃣ **Update Products**
+2️⃣ **Produkte aktualisieren**
 
-- Allows editing existing products.
-- Dynamically loads product details, including variants.
-- Supports previewing changes before updating.
-
----
-
-## 🔒 Security & Error Handling
-
-- Extensive input validation in provisioning services.
-- Faulty webhooks return standardized error responses.
-- Secure access to Shopify Admin API via API token.
+- Ermöglicht das Bearbeiten bestehender Produkte.
+- Lädt Produktdetails inkl. Varianten dynamisch.
+- Unterstützt die Vorschau von Änderungen vor dem Update.
 
 ---
 
-## 🔒 Sensitive Information Replacement
+## 🔒 Sicherheit & Fehlerbehandlung
 
-To prevent data leakage, sensitive tokens have been replaced in the project as follows:
+- Umfassende Eingabevalidierung in den Bereitstellungsdiensten
+- Fehlerhafte Webhooks liefern standardisierte Fehlermeldungen
+- Sicherer Zugriff auf die Shopify Admin API über API-Token
+
+---
+
+## 🔒 Austausch sensibler Informationen
+
+Um Datenlecks zu vermeiden, wurden sensible Tokens im Projekt wie folgt ersetzt:
 
 - `STOREFRONT_ACCESS_TOKEN` → `<STOREFRONT_ACCESS_TOKEN>`
 - `CUSTOM_CHECKOUT_APP_ADMIN_API_TOKEN` → `<CUSTOM_CHECKOUT_APP_ADMIN_API_TOKEN>`
 - `PRODUCT_PROVISIONING_SERVICE_ADMIN_API_TOKEN` → `<PRODUCT_PROVISIONING_SERVICE_ADMIN_API_TOKEN>`
 
-These placeholders are used throughout the project files. For access to the actual tokens, please contact Adel Ahmadi at:
+Diese Platzhalter werden in den Projektdateien verwendet. Für Zugriff auf die echten Tokens bitte Kontakt aufnehmen mit:
 ✉️ adel.ahmadi.informatiker@gmail.com
 
 ---
 
-## 🏗 Future Expansion
+## 🏗 Zukünftige Erweiterungen
 
-- Webhook retry mechanisms for increased reliability.
-- Product updates: Modify existing products when changes occur in Club Manager.
-- Preview mode: Create products in draft mode and publish later.
-- Monitoring & logging: Enhanced logic for better oversight.
+- Webhook-Retry-Mechanismen für höhere Zuverlässigkeit
+- Produkt-Updates: Bestehende Produkte bei Änderungen im Club Manager anpassen
+- Vorschau-Modus: Produkte als Entwurf anlegen und später veröffentlichen
+- Monitoring & Logging: Verbesserte Überwachungslogik
 
 ---
 
-## 🚀 Deployment Roadmap for Production Environment
+## 🚀 Deployment-Roadmap für Produktionsumgebungen
 
-- Deployment on dedicated servers (e.g., Hetzner Cloud, AWS Lightsail).
-- Static public DNS instead of ngrok for permanent accessibility.
-- CI/CD pipeline via GitHub Actions for automated releases.
-- Secrets management for API tokens (e.g., AWS Secrets Manager, HashiCorp Vault).
+- Deployment auf dedizierten Servern (z.B. Hetzner Cloud, AWS Lightsail)
+- Statische öffentliche DNS statt ngrok für dauerhafte Erreichbarkeit
+- CI/CD-Pipeline via GitHub Actions für automatisierte Releases
+- Secrets-Management für API-Tokens (z.B. AWS Secrets Manager, HashiCorp Vault)
