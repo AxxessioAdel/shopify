@@ -7,6 +7,8 @@ import clubManagerApiClient from "../utils/clubManagerApiClient.js";
  * @returns {Promise<Object>} Ergebnis der Operation
  */
 export default async function triggerPaymentSync() {
+  console.log("[Debug] triggerPaymentSync started");
+
   try {
     const paidOrders = await fetchPaidOrders();
     const results = [];

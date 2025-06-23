@@ -4,16 +4,21 @@ import cors from "cors";
 import paymentConfirmation from "./routes/paymentConfirmation.js";
 
 dotenv.config();
-
 const app = express();
 
 // Load .env variable
-const PORT = process.env.CLUB_MANAGER_PORT || 3002;
-const PROVISIONING_API_URL =
-  process.env.PROVISIONING_API_URL ||
-  "http://localhost:3001/api/product-provisioning";
-
+const PORT = process.env.CLUB_MANAGER_PORT;
+const PROVISIONING_API_URL = process.env.PROVISIONING_API_URL;
 const useWebhook = process.env.USE_WEBHOOK === "true";
+const shop = process.env.SHOPIFY_SHOP;
+const accessToken = process.env.CUSTOM_CHECKOUT_APP_ADMIN_API_TOKEN;
+
+console.log("[Debug] index.js gestartet");
+// console.log("[Debug] PORT:", PORT);
+// console.log("[Debug] PROVISIONING_API_URL:", PROVISIONING_API_URL);
+// console.log("[Debug] USE_WEBHOOK:", useWebhook);
+// console.log("[Debug] SHOPIFY_SHOP:", shop);
+// console.log("[Debug] CUSTOM_CHECKOUT_APP_ADMIN_API_TOKEN:", accessToken);
 
 // CORS support
 app.use(cors());
