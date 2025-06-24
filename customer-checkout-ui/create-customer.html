@@ -4,83 +4,150 @@
     <meta charset="UTF-8" />
     <title>Kunde erstellen – Testshop</title>
     <script type="module" src="../customer-checkout/createCustomer.js"></script>
+    <!-- Bulma CSS eingebunden für modernes, responsives Design -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@1.0.1/css/bulma.min.css"
+    />
     <style>
-      body {
-        font-family: sans-serif;
-        max-width: 600px;
-        margin: 30px auto;
+      .container {
+        max-width: 500px;
+        margin-top: 2em;
       }
-      label {
-        display: block;
-        margin-top: 10px;
-      }
-      input {
-        width: 100%;
-        padding: 8px;
-        margin-top: 5px;
-      }
-      button {
+      #message {
         margin-top: 20px;
-        padding: 10px 20px;
+        font-weight: bold;
       }
     </style>
   </head>
   <body>
-    <h1>Neuen Kunden erstellen</h1>
+    <div class="container">
+      <h1 class="title">Neuen Kunden erstellen</h1>
 
-    <form id="customer-form">
-      <label
-        >Vorname:
-        <input type="text" id="firstName" value="Steve" required />
-      </label>
+      <form id="customer-form">
+        <div class="field">
+          <label class="label" for="firstName">Vorname</label>
+          <div class="control">
+            <input
+              class="input"
+              type="text"
+              id="firstName"
+              value="Steve"
+              required
+            />
+          </div>
+        </div>
 
-      <label
-        >Nachname:
-        <input type="text" id="lastName" value="Lastnameson" required />
-      </label>
+        <div class="field">
+          <label class="label" for="lastName">Nachname</label>
+          <div class="control">
+            <input
+              class="input"
+              type="text"
+              id="lastName"
+              value="Lastnameson"
+              required
+            />
+          </div>
+        </div>
 
-      <label
-        >Email-Adresse:
-        <input type="email" id="email" value="example@email.com" required />
-      </label>
+        <div class="field">
+          <label class="label" for="email">Email-Adresse</label>
+          <div class="control">
+            <input
+              class="input"
+              type="email"
+              id="email"
+              value="example@email.com"
+              required
+            />
+          </div>
+        </div>
 
-      <label
-        >Telefonnummer:
-        <input type="text" id="phone" value="+49 151 00000001" required />
-      </label>
+        <div class="field">
+          <label class="label" for="phone">Telefonnummer</label>
+          <div class="control">
+            <input
+              class="input"
+              type="text"
+              id="phone"
+              value="+49 151 00000001"
+              required
+            />
+          </div>
+        </div>
 
-      <label
-        >Passwort:
-        <input type="password" id="password" value="Test1234!" required />
-      </label>
+        <div class="field">
+          <label class="label" for="password">Passwort</label>
+          <div class="control">
+            <input
+              class="input"
+              type="password"
+              id="password"
+              value="Test1234!"
+              required
+            />
+          </div>
+        </div>
 
-      <label
-        >Adresse:
-        <input type="text" id="address1" value="Musterstraße 12" required />
-      </label>
+        <div class="field">
+          <label class="label" for="address1">Adresse</label>
+          <div class="control">
+            <input
+              class="input"
+              type="text"
+              id="address1"
+              value="Musterstraße 12"
+              required
+            />
+          </div>
+        </div>
 
-      <label
-        >Stadt:
-        <input type="text" id="city" value="Bonn" required />
-      </label>
+        <div class="field">
+          <label class="label" for="city">Stadt</label>
+          <div class="control">
+            <input class="input" type="text" id="city" value="Bonn" required />
+          </div>
+        </div>
 
-      <label
-        >Bundesland (z. B. NW):
-        <input type="text" id="province" value="NW" required />
-      </label>
+        <div class="field">
+          <label class="label" for="province">Bundesland (z. B. NW)</label>
+          <div class="control">
+            <input
+              class="input"
+              type="text"
+              id="province"
+              value="NW"
+              required
+            />
+          </div>
+        </div>
 
-      <label
-        >Postleitzahl:
-        <input type="text" id="zip" value="53111" required />
-      </label>
+        <div class="field">
+          <label class="label" for="zip">Postleitzahl</label>
+          <div class="control">
+            <input class="input" type="text" id="zip" value="53111" required />
+          </div>
+        </div>
 
-      <label
-        >Land (z. B. DE):
-        <input type="text" id="country" value="DE" required />
-      </label>
+        <div class="field">
+          <label class="label" for="country">Land (z. B. DE)</label>
+          <div class="control">
+            <input class="input" type="text" id="country" value="DE" required />
+          </div>
+        </div>
 
-      <button type="submit">Jetzt Kundenkonto anlegen</button>
-    </form>
+        <div class="field">
+          <div class="control">
+            <button class="button is-primary" type="submit">
+              Jetzt Kundenkonto anlegen
+            </button>
+          </div>
+        </div>
+      </form>
+
+      <div id="message"></div>
+    </div>
 
     <script>
       document
@@ -111,11 +178,13 @@
           );
 
           const result = await response.json();
+          const messageDiv = document.getElementById("message");
           if (result.success) {
             const message = result.isNew
               ? "✅ Kunde erfolgreich erstellt!"
               : `ℹ️ Kunde existierte bereits: ${result.customer.id}`;
-            alert(message);
+            messageDiv.innerHTML = message;
+            messageDiv.classList.add("has-text-success");
             localStorage.setItem(
               "customerInfo",
               JSON.stringify({
@@ -125,9 +194,12 @@
                 phone: payload.phone,
               })
             );
-            window.location.href = "demo-purchase.html";
+            setTimeout(() => {
+              window.location.href = "demo-purchase.html";
+            }, 2000);
           } else {
-            alert("Fehler: " + JSON.stringify(result.error));
+            messageDiv.innerHTML = "Fehler: " + JSON.stringify(result.error);
+            messageDiv.classList.add("has-text-danger");
             console.error(result);
           }
         });

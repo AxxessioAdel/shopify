@@ -5,78 +5,115 @@
     <title>Demo-Kauf durchführen</title>
     <script src="js/checkout-client.js"></script>
 
+    <!-- Bulma CSS eingebunden für modernes, responsives Design -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@1.0.1/css/bulma.min.css"
+    />
     <style>
-      body {
-        font-family: sans-serif;
+      .container {
         max-width: 600px;
-        margin: 30px auto;
+        margin-top: 2em;
       }
-      label {
-        display: block;
-        margin-top: 10px;
-      }
-      input {
-        width: 100%;
-        padding: 8px;
-        margin-top: 5px;
-      }
-      button {
+      #message {
         margin-top: 20px;
-        padding: 10px 20px;
+        font-weight: bold;
       }
     </style>
   </head>
   <body>
-    <h1>Demo-Kauf</h1>
+    <div class="container">
+      <h1 class="title">Demo-Kauf</h1>
 
-    <form id="checkout-form">
-      <label
-        >Empfängername:
-        <input type="text" id="name" required />
-      </label>
+      <form id="checkout-form">
+        <div class="field">
+          <label class="label">Empfängername:</label>
+          <div class="control">
+            <input
+              class="input"
+              type="text"
+              id="name"
+              placeholder="Max Mustermann"
+              required
+            />
+          </div>
+        </div>
 
-      <label
-        >E-Mail-Adresse:
-        <input type="email" id="email" required />
-      </label>
+        <div class="field">
+          <label class="label">E-Mail-Adresse:</label>
+          <div class="control">
+            <input
+              class="input"
+              type="email"
+              id="email"
+              placeholder="max@mustermann.de"
+              required
+            />
+          </div>
+        </div>
 
-      <label
-        >Mobilnummer:
-        <input type="text" id="phone" required />
-      </label>
+        <div class="field">
+          <label class="label">Mobilnummer:</label>
+          <div class="control">
+            <input
+              class="input"
+              type="text"
+              id="phone"
+              placeholder="0123456789"
+              required
+            />
+          </div>
+        </div>
 
-      <label
-        >Grußtext:
-        <input
-          type="text"
-          id="message"
-          value="Herzlichen Glückwunsch!"
-          required
-        />
-      </label>
+        <div class="field">
+          <label class="label">Grußtext:</label>
+          <div class="control">
+            <input
+              class="input"
+              type="text"
+              id="message"
+              value="Herzlichen Glückwunsch!"
+              required
+            />
+          </div>
+        </div>
 
-      <label
-        >Produkt-Variante (variantId):
-        <input
-          type="text"
-          id="variantId"
-          value="gid://shopify/ProductVariant/51664838197512"
-          required
-        />
-      </label>
+        <div class="field">
+          <label class="label">Produkt-Variante (variantId):</label>
+          <div class="control">
+            <input
+              class="input"
+              type="text"
+              id="variantId"
+              value="gid://shopify/ProductVariant/51664838197512"
+              required
+            />
+          </div>
+        </div>
 
-      <p>Für wen ist die Karte?</p>
-      <label
-        ><input type="radio" name="recipient" value="ich" checked /> Für
-        mich</label
-      ><br />
-      <label
-        ><input type="radio" name="recipient" value="freund" /> Für einen
-        Freund</label
-      ><br /><br />
+        <p class="subtitle">Für wen ist die Karte?</p>
+        <div class="field">
+          <div class="control">
+            <label class="radio">
+              <input type="radio" name="recipient" value="ich" checked /> Für
+              mich
+            </label>
+            <label class="radio">
+              <input type="radio" name="recipient" value="freund" /> Für einen
+              Freund
+            </label>
+          </div>
+        </div>
 
-      <button type="submit">Jetzt kaufen</button>
-    </form>
+        <div class="field">
+          <div class="control">
+            <button class="button is-primary" type="submit">
+              Jetzt kaufen
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
 
     <script>
       document.addEventListener("DOMContentLoaded", () => {

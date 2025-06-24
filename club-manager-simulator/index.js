@@ -83,7 +83,7 @@ app.post("/simulate-webhook", async (req, res) => {
     tags: ["Autogramm", "Deluxe", "Messi"],
     images: [
       {
-        src: "https://res.cloudinary.com/dhrq96tlr/image/upload/v1749979271/box_dejf0a.png",
+        src: "https://cdn.shopify.com/s/files/1/0968/5775/1816/files/Produkt_Logo.png?v=1750754793",
         alt: "Autogrammkarte Messi",
       },
     ],

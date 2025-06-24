@@ -1,127 +1,180 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Produkt erstellen</title>
-  <style>
-    #message {
-      margin-top: 20px;
-      font-weight: bold;
-    }
-    #message.success {
-      color: green;
-    }
-    #message.error {
-      color: red;
-    }
-  </style>
-</head>
-<body>
-  <h1>Produkt erstellen</h1>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Produkt erstellen</title>
+    <!-- Bulma CSS eingebunden für modernes, responsives Design -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@1.0.1/css/bulma.min.css"
+    />
+    <style>
+      /* Zusätzliche Anpassungen für Vorschau und Nachrichten */
+      #previewOutput {
+        background: #f5f5f5;
+        border-radius: 4px;
+        padding: 1em;
+        margin-top: 1em;
+        font-size: 0.95em;
+      }
+      #message {
+        margin-top: 20px;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body class="section">
+    <div class="container">
+      <h1 class="title">Produkt erstellen</h1>
+      <a href="index.html" class="button is-light mb-4"
+        >⬅️ Zurück zur Übersicht</a
+      >
+      <form id="createProductForm" class="box">
+        <div class="field">
+          <label class="label">Title</label>
+          <div class="control">
+            <input
+              class="input"
+              type="text"
+              id="title"
+              required
+              value="Autogrammkarte Messi"
+            />
+          </div>
+        </div>
+        <div class="field">
+          <label class="label">Description</label>
+          <div class="control">
+            <input
+              class="input"
+              type="text"
+              id="description"
+              required
+              value="Limitierte Auflage"
+            />
+          </div>
+        </div>
+        <div class="field">
+          <label class="label">Vendor</label>
+          <div class="control">
+            <input
+              class="input"
+              type="text"
+              id="vendor"
+              required
+              value="FC Barcelona"
+            />
+          </div>
+        </div>
+        <div class="field">
+          <label class="label">Product Type</label>
+          <div class="control">
+            <input
+              class="input"
+              type="text"
+              id="product_type"
+              required
+              value="Autogrammkarte"
+            />
+          </div>
+        </div>
+        <div class="field">
+          <label class="label">Tags (comma separated)</label>
+          <div class="control">
+            <input
+              class="input"
+              type="text"
+              id="tags"
+              value="Autogramm,Deluxe,Messi"
+            />
+          </div>
+        </div>
+        <div class="field">
+          <label class="label">Image URL</label>
+          <div class="control">
+            <input
+              class="input"
+              type="text"
+              id="image"
+              required
+              value="https://cdn.shopify.com/s/files/1/0968/5775/1816/files/Produkt_Logo.png?v=1750754793"
+            />
+          </div>
+        </div>
+        <h3 class="subtitle mt-4">Pricing Groups:</h3>
+        <div id="pricingGroupsContainer">
+          <div class="pricingGroup field is-grouped">
+            <div class="control">
+              <label
+                >Group Name:
+                <input
+                  class="input group-name"
+                  type="text"
+                  required
+                  value="Standard"
+              /></label>
+            </div>
+            <div class="control">
+              <label
+                >Price:
+                <input
+                  class="input group-price"
+                  type="number"
+                  required
+                  value="29.99"
+              /></label>
+            </div>
+          </div>
+          <div class="pricingGroup field is-grouped">
+            <div class="control">
+              <label
+                >Group Name:
+                <input
+                  class="input group-name"
+                  type="text"
+                  required
+                  value="Deluxe"
+              /></label>
+            </div>
+            <div class="control">
+              <label
+                >Price:
+                <input
+                  class="input group-price"
+                  type="number"
+                  required
+                  value="59.99"
+              /></label>
+            </div>
+          </div>
+        </div>
+        <div class="field is-grouped mt-3">
+          <div class="control">
+            <button type="button" class="button is-info" id="addPricingGroup">
+              ➕ Add Pricing Group
+            </button>
+          </div>
+        </div>
+        <hr />
 
-  <form id="createProductForm">
-    <label>Title: <input type="text" id="title" required value="Autogrammkarte Messi" /></label><br />
-    <label>Description: <input type="text" id="description" required value="Limitierte Auflage" /></label><br />
-    <label>Vendor: <input type="text" id="vendor" required value="FC Barcelona" /></label><br />
-    <label>Product Type: <input type="text" id="product_type" required value="Autogrammkarte" /></label><br />
-    <label>Tags (comma separated): <input type="text" id="tags" value="Autogramm,Deluxe,Messi" /></label><br />
-    <label>Image URL: <input type="text" id="image" required value="https://res.cloudinary.com/dhrq96tlr/image/upload/v1749979271/box_dejf0a.png" /></label><br />
-    
-    <h3>Pricing Groups:</h3>
-    <div id="pricingGroupsContainer">
-      <div class="pricingGroup">
-        <label>Group Name: <input type="text" class="group-name" required value="Standard" /></label>
-        <label>Price: <input type="number" class="group-price" required value="29.99" /></label>
-      </div>
-      <div class="pricingGroup">
-        <label>Group Name: <input type="text" class="group-name" required value="Deluxe" /></label>
-        <label>Price: <input type="number" class="group-price" required value="59.99" /></label>
-      </div>
+        <div class="field is-grouped mt-3">
+          <div class="control">
+            <button type="button" class="button is-primary" id="previewButton">
+              👀 Preview Product
+            </button>
+          </div>
+          <div class="control">
+            <button type="button" class="button is-link" id="sendButton">
+              🚀 Produkt jetzt anlegen
+            </button>
+          </div>
+        </div>
+      </form>
+      <h2 class="subtitle mt-5">📦 Preview:</h2>
+      <pre id="previewOutput"></pre>
+      <div id="message" class="notification"></div>
     </div>
-
-    <button type="button" id="addPricingGroup">➕ Add Pricing Group</button><br /><br />
-
-    <button type="button" id="previewButton">👀 Preview Product</button>
-    <button type="button" id="sendButton">🚀 Produkt jetzt anlegen</button>
-  </form>
-
-  <h2>📦 Preview:</h2>
-  <pre id="previewOutput"></pre>
-
-  <div id="message"></div>
-
-  <script src="js/utils.js"></script>
-
-  <script>
-    let latestPayload = null;
-
-    document.getElementById("addPricingGroup").addEventListener("click", () => {
-      const container = document.getElementById("pricingGroupsContainer");
-      const newGroup = document.createElement("div");
-      newGroup.classList.add("pricingGroup");
-      newGroup.innerHTML = `
-        <label>Group Name: <input type="text" class="group-name" required /></label>
-        <label>Price: <input type="number" class="group-price" required /></label>
-      `;
-      container.appendChild(newGroup);
-    });
-
-    document.getElementById("previewButton").addEventListener("click", () => {
-      const payload = buildPayloadFromForm();
-      latestPayload = payload;
-      document.getElementById("previewOutput").textContent = JSON.stringify(payload, null, 2);
-      showMessage("Produktdaten erfolgreich vorbereitet. Bitte prüfen!", "success");
-    });
-
-    document.getElementById("sendButton").addEventListener("click", async () => {
-      if (!latestPayload) {
-        showMessage("Bitte zuerst Preview durchführen!", "error");
-        return;
-      }
-
-      disableButtons(true);
-
-      try {
-        const response = await fetch("http://localhost:3002/simulate-webhook", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(latestPayload)
-        });
-
-        const result = await response.json();
-        console.log("✅ Webhook erfolgreich ausgelöst:", result);
-        showMessage("✅ Produkt erfolgreich an Shopify übermittelt!", "success");
-        resetForm();
-      } catch (error) {
-        console.error("❌ Fehler beim Webhook:", error);
-        showMessage("❌ Fehler beim Webhook senden.", "error");
-      } finally {
-        disableButtons(false);
-      }
-    });
-
-    function showMessage(message, type) {
-      const msgElem = document.getElementById("message");
-      msgElem.textContent = message;
-      msgElem.className = type;
-    }
-
-    function disableButtons(state) {
-      document.getElementById("sendButton").disabled = state;
-      document.getElementById("previewButton").disabled = state;
-    }
-
-    function resetForm() {
-      document.getElementById("createProductForm").reset();
-      document.getElementById("pricingGroupsContainer").innerHTML = `
-        <div class="pricingGroup">
-          <label>Group Name: <input type="text" class="group-name" required /></label>
-          <label>Price: <input type="number" class="group-price" required /></label>
-        </div>`;
-      document.getElementById("previewOutput").textContent = "";
-      latestPayload = null;
-    }
-  </script>
-
-</body>
+    <script src="js/utils.js"></script>
+    <script src="js/create-product.js"></script>
+  </body>
 </html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Produkt löschen</title>
+    <!-- Bulma CSS eingebunden für modernes, responsives Design -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@1.0.1/css/bulma.min.css"
+    />
+    <style>
+      #message {
+        margin-top: 20px;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body class="section">
+    <div class="container">
+      <h1 class="title">Produkt löschen</h1>
+      <a href="index.html" class="button is-light mb-4"
+        >⬅️ Zurück zur Übersicht</a
+      >
+      <label for="productSelect" class="label">Produkt wählen:</label>
+      <div class="select mb-4">
+        <select id="productSelect">
+          <option value="">Produkte werden geladen...</option>
+        </select>
+      </div>
+      <div id="deleteFormContainer" style="display: none">
+        <h2 class="subtitle">Produkt löschen bestätigen:</h2>
+        <div class="box">
+          <p id="productInfo"></p>
+          <hr />
+
+          <button id="deleteButton" class="button is-danger">
+            Produkt löschen
+          </button>
+        </div>
+      </div>
+      <div id="message"></div>
+    </div>
+    <script src="js/delete-product.js"></script>
+  </body>
+</html>

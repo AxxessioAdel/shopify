@@ -1,19 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Club Manager Simulator UI</title>
-</head>
-<body>
-  <h1>Club Manager Simulator UI</h1>
-
-  <ul>
-    <li><a href="create-product.html">➕ Produkt erstellen</a></li>
-    <li><a href="preview-product.html">👀 Vorschau Produkt</a></li>
-    <li><a href="update-product.html">✏️ Produkt aktualisieren</a></li>
-    <li><a href="delete-product.html">🗑 Produkt löschen</a></li>
-    <li><a href="simulate-webhook.html">🚀 Webhook Simulation</a></li>
-  </ul>
-
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Club Manager Simulator UI</title>
+    <!-- Bulma CSS eingebunden für modernes, responsives Design -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@1.0.1/css/bulma.min.css"
+    />
+    <style>
+      .button.is-large {
+        font-size: 1.1rem;
+        padding: 10px 20px;
+        justify-content: center;
+        display: flex;
+        align-items: center;
+        text-align: center;
+      }
+      .button.is-large > .icon,
+      .button.is-large > span {
+        flex-grow: 1;
+        width: auto;
+        text-align: center;
+        justify-content: center;
+        align-items: center;
+        display: flex;
+      }
+      .icon {
+        font-size: 1.1em;
+      }
+      .title {
+        font-size: 2rem;
+      }
+    </style>
+  </head>
+  <body class="section">
+    <div class="container has-text-centered">
+      <h1 class="title mb-6">Club Manager Simulator UI</h1>
+      <div class="columns is-centered is-multiline">
+        <div class="column is-3">
+          <a
+            class="button is-link is-fullwidth is-large mb-4"
+            href="create-product.html"
+          >
+            <span class="icon"><i class="fas fa-plus"></i></span>
+            <span>➕ Produkt erstellen</span>
+          </a>
+        </div>
+        <div class="column is-3">
+          <a
+            class="button is-info is-fullwidth is-large mb-4"
+            href="preview-product.html"
+          >
+            <span class="icon"><i class="fas fa-eye"></i></span>
+            <span>👀 Vorschau Produkt</span>
+          </a>
+        </div>
+        <div class="column is-3">
+          <a
+            class="button is-warning is-fullwidth is-large mb-4"
+            href="update-product.html"
+          >
+            <span class="icon"><i class="fas fa-edit"></i></span>
+            <span>✏️ Produkt aktualisieren</span>
+          </a>
+        </div>
+        <div class="column is-3">
+          <a
+            class="button is-danger is-fullwidth is-large mb-4"
+            href="delete-product.html"
+          >
+            <span class="icon"><i class="fas fa-trash"></i></span>
+            <span>🗑 Produkt löschen</span>
+          </a>
+        </div>
+      </div>
+    </div>
+    <!-- Font Awesome für Icons -->
+    <script
+      src="https://kit.fontawesome.com/4b8b8b8b8b.js"
+      crossorigin="anonymous"
+    ></script>
+  </body>
 </html>

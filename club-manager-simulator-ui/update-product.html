@@ -2,238 +2,133 @@
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Produkt aktualisieren</title>
-  <style>
-    #message {
-      margin-top: 20px;
-      font-weight: bold;
-    }
-    #message.success {
-      color: green;
-    }
-    #message.error {
-      color: red;
-    }
-  </style>
-</head>
-<body>
-  <h1>Produkt aktualisieren</h1>
-
-  <label for="productSelect">Produkt wählen:</label>
-  <select id="productSelect">
-    <option value="">Produkte werden geladen...</option>
-  </select>
-
-  <div id="editFormContainer" style="display:none;">
-    <h2>Produkt bearbeiten:</h2>
-    <form id="editProductForm">
-      <label>Title: <input type="text" id="title" required /></label><br />
-      <label>Description: <input type="text" id="description" required /></label><br />
-      <label>Vendor: <input type="text" id="vendor" required /></label><br />
-      <label>Product Type: <input type="text" id="product_type" required /></label><br />
-      <label>Tags (comma separated): <input type="text" id="tags" /></label><br />
-      <label>Image URL: <input type="text" id="image" required /></label><br />
-      <label>Variants:</label>
-      <div id="variantsContainer">
-        <!-- Variants will be dynamically populated here -->
+  <head>
+    <meta charset="UTF-8" />
+    <title>Produkt aktualisieren</title>
+    <!-- Bulma CSS eingebunden für modernes, responsives Design -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@1.0.1/css/bulma.min.css"
+    />
+    <style>
+      #previewOutput {
+        background: #f5f5f5;
+        border-radius: 4px;
+        padding: 1em;
+        margin-top: 1em;
+        font-size: 0.95em;
+      }
+      #message {
+        margin-top: 20px;
+        font-weight: bold;
+      }
+      /* Variants Styling */
+      #variantsContainer .variant {
+        background: #f7f7f7;
+        border: 1px solid #e0e0e0;
+        border-radius: 5px;
+        padding: 0.7em 1em;
+        margin-bottom: 0.7em;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+        min-width: 200px;
+        max-width: 320px;
+        font-size: 0.97em;
+      }
+      #variantsContainer .variant label {
+        font-weight: 400;
+        margin-bottom: 0.2em;
+        font-size: 0.97em;
+      }
+      #variantsContainer .variant input[type="text"] {
+        margin-bottom: 0.5em;
+        width: 100%;
+        font-size: 0.97em;
+        padding: 0.4em 0.6em;
+      }
+      #variantsContainer {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.7em;
+      }
+    </style>
+  </head>
+  <body class="section">
+    <div class="container">
+      <h1 class="title">Produkt aktualisieren</h1>
+      <a href="index.html" class="button is-light mb-4"
+        >⬅️ Zurück zur Übersicht</a
+      >
+      <label for="productSelect" class="label">Produkt wählen:</label>
+      <div class="select mb-4">
+        <select id="productSelect">
+          <option value="">Produkte werden geladen...</option>
+        </select>
       </div>
-    </form>
+      <div id="editFormContainer" style="display: none">
+        <h2 class="subtitle">Produkt bearbeiten:</h2>
+        <form id="editProductForm" class="box">
+          <div class="field">
+            <label class="label">Title</label>
+            <div class="control">
+              <input class="input" type="text" id="title" required />
+            </div>
+          </div>
+          <div class="field">
+            <label class="label">Description</label>
+            <div class="control">
+              <input class="input" type="text" id="description" required />
+            </div>
+          </div>
+          <div class="field">
+            <label class="label">Vendor</label>
+            <div class="control">
+              <input class="input" type="text" id="vendor" required />
+            </div>
+          </div>
+          <div class="field">
+            <label class="label">Product Type</label>
+            <div class="control">
+              <input class="input" type="text" id="product_type" required />
+            </div>
+          </div>
+          <div class="field">
+            <label class="label">Tags (comma separated)</label>
+            <div class="control">
+              <input class="input" type="text" id="tags" />
+            </div>
+          </div>
+          <div class="field">
+            <label class="label">Image URL</label>
+            <div class="control">
+              <input class="input" type="text" id="image" required />
+            </div>
+          </div>
+          <hr />
+          <div class="field">
+            <label class="label">Variants:</label>
+            <br />
+            <div id="variantsContainer" class="columns is-multiline"></div>
+          </div>
+          <hr />
+          <div class="field is-grouped mt-3">
+            <div class="control">
+              <button type="button" class="button is-info" id="previewButton">
+                👀 Preview Changes
+              </button>
+            </div>
+            <div class="control">
+              <button type="button" class="button is-primary" id="saveButton">
+                💾 Save Changes
+              </button>
+            </div>
+          </div>
+        </form>
+        <h2 class="subtitle mt-5">📦 Preview:</h2>
+        <pre id="previewOutput"></pre>
+      </div>
+      <div id="message" class="notification"></div>
+    </div>
 
-    <button type="button" id="previewButton">👀 Preview Changes</button>
-    <button type="button" id="saveButton">💾 Save Changes</button>
-
-    <h2>📦 Preview:</h2>
-    <pre id="previewOutput"></pre>
-  </div>
-
-  <div id="message"></div>
-
-  <script>
-    let latestPayload = null;
-    let selectedProductId = null;
-
-    async function loadProducts() {
-      try {
-        const response = await fetch("http://localhost:3001/api/products");
-        const result = await response.json();
-
-        const select = document.getElementById("productSelect");
-        select.innerHTML = "";
-
-        result.products.forEach(product => {
-          const option = document.createElement("option");
-          option.value = product.id;
-          option.textContent = `${product.title} (ID: ${product.id})`;
-          select.appendChild(option);
-        });
-
-      } catch (error) {
-        console.error("❌ Fehler beim Laden der Produkte:", error);
-        showMessage("Fehler beim Laden der Produktliste.", "error");
-      }
-    }
-
-    async function loadProductDetails(productId) {
-      try {
-        const response = await fetch(`http://localhost:3001/api/products/${productId}`);
-        const product = await response.json();
-
-        console.log("🔍 API Response:", product);
-
-        if (!product || !product.title) {
-          console.error("❌ Invalid API response: Missing product data.");
-          showMessage("Fehler beim Laden des Produktes: Produktdaten fehlen.", "error");
-          return;
-        }
-
-        document.getElementById("title").value = product.title || "";
-        document.getElementById("description").value = product.body_html || "";
-        document.getElementById("vendor").value = product.vendor || "";
-        document.getElementById("product_type").value = product.product_type || "";
-        document.getElementById("tags").value = product.tags || "";
-        document.getElementById("image").value = (product.image && product.image.src) ? product.image.src : "";
-
-        const variantsContainer = document.getElementById("variantsContainer");
-        variantsContainer.innerHTML = "";
-
-        if (product.variants && product.variants.length > 0) {
-          product.variants.forEach(variant => {
-            const variantDiv = document.createElement("div");
-            variantDiv.classList.add("variant");
-            variantDiv.innerHTML = `
-              <label>Variant Title: <input type="text" value="${variant.title || ''}" data-id="${variant.id}" /></label><br />
-              <label>Price: <input type="text" value="${variant.price || ''}" /></label><br />
-            `;
-            variantsContainer.appendChild(variantDiv);
-          });
-        } else {
-          console.warn("⚠️ No variants found for the product.");
-          showMessage("No variants found for the selected product.", "error");
-        }
-
-        document.getElementById("editFormContainer").style.display = "block";
-      } catch (error) {
-        console.error("❌ Fehler beim Laden des Produktes:", error);
-        showMessage("Fehler beim Laden des Produktes.", "error");
-      }
-    }
-
-    document.getElementById("productSelect").addEventListener("change", (e) => {
-      selectedProductId = e.target.value;
-      if (selectedProductId) {
-        loadProductDetails(selectedProductId);
-      } else {
-        document.getElementById("editFormContainer").style.display = "none";
-      }
-    });
-
-    document.getElementById("previewButton").addEventListener("click", () => {
-      const payload = buildPayloadFromForm();
-      latestPayload = payload;
-      document.getElementById("previewOutput").textContent = JSON.stringify(payload, null, 2);
-      showMessage("Preview generiert.", "success");
-    });
-
-    document.getElementById("saveButton").addEventListener("click", async () => {
-      if (!selectedProductId || !latestPayload) {
-        showMessage("Bitte zuerst Produkt wählen und Preview generieren!", "error");
-        return;
-      }
-
-      try {
-        const response = await fetch(`http://localhost:3001/api/products/${selectedProductId}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(latestPayload)
-        });
-
-        const result = await response.json();
-        console.log("✅ Produkt erfolgreich aktualisiert:", result);
-        showMessage("✅ Produkt erfolgreich aktualisiert!", "success");
-      } catch (error) {
-        console.error("❌ Fehler beim Aktualisieren:", error);
-        showMessage("❌ Fehler beim Aktualisieren.", "error");
-      }
-    });
-
-    function buildPayloadFromForm() {
-      const title = document.getElementById("title").value;
-      const description = document.getElementById("description").value;
-      const vendor = document.getElementById("vendor").value;
-      const product_type = document.getElementById("product_type").value;
-      const tags = document.getElementById("tags").value.split(",").map(tag => tag.trim()).filter(tag => tag);
-
-      const variants = [];
-      const pricingGroups = document.querySelectorAll("#variantsContainer .variant");
-
-      pricingGroups.forEach((group, index) => {
-        const inputs = group.querySelectorAll("input[type='text']");
-        const option1Input = inputs[0];
-        const priceInput = inputs[1];
-
-        if (option1Input && priceInput) {
-          const option1 = option1Input.value.trim();
-          const price = parseFloat(priceInput.value);
-          const variantId = option1Input.dataset.id;
-
-          if (option1 && !isNaN(price) && variantId) {
-            variants.push({
-              id: parseInt(variantId),
-              option1: option1,
-              price: price,
-              position: index + 1
-            });
-          } else {
-            console.warn(`⚠️ Invalid data for variant at position ${index + 1}`);
-            showMessage(`Invalid data for variant at position ${index + 1}. Please check the form.`, "error");
-          }
-        } else {
-          console.warn(`⚠️ Missing input fields for variant at position ${index + 1}`);
-          showMessage(`Missing input fields for variant at position ${index + 1}. Please check the form.`, "error");
-        }
-      });
-
-      if (variants.length === 0) {
-        console.error("❌ No valid variants found. Cannot proceed.");
-        showMessage("No valid variants found. Please check the form.", "error");
-        return null;
-      }
-
-      const image = document.getElementById("image").value;
-        if (!image) {
-            console.error("❌ Image URL is required.");
-            showMessage("Image URL is required.", "error");
-            return null;
-        }
-
-      const options = [{
-        name: "Version",
-        values: variants.map(variant => variant.option1)
-      }];
-
-      const payload = {
-        title: title,
-        description: description,
-        vendor: vendor,
-        product_type: product_type,
-        tags: tags,
-        variants: variants,
-        images: [image],
-        options: options
-      };
-
-      return payload;
-    }
-
-    function showMessage(message, type) {
-      const msgElem = document.getElementById("message");
-      msgElem.textContent = message;
-      msgElem.className = type;
-    }
-
-    loadProducts();
-  </script>
-</body>
+    <script src="js/update-product.js"></script>
+  </body>
 </html>

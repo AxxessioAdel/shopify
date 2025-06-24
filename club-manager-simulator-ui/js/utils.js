@@ -22,15 +22,29 @@ function buildPayloadFromForm() {
     }
   });
 
+  // Korrektur: images sollte ein Array von Objekten mit dem Schlüssel src sein
+  console.log(chalk.green("From Utils.js: buildPayloadFromForm called"));
+  console.log(chalk.red("Images:"), image);
+
   const payload = {
     title: title,
     description: description,
     vendor: vendor,
     product_type: product_type,
     tags: tags,
-    images: [image],
+    images: image,
     pricing_groups: pricingGroups,
   };
+
+  console.log(chalk.blue("Payload:"), {
+    title,
+    description,
+    vendor,
+    product_type,
+    tags,
+    image,
+    pricingGroups,
+  });
 
   return payload;
 }
