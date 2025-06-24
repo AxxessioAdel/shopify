@@ -1,13 +1,14 @@
 // Aufgabe: Manuelles oder geplantes Auslösen zum Senden bezahlter Bestellungen an Club Manager
 import fetchPaidOrders from "./fetchPaidOrders.js";
 import clubManagerApiClient from "../utils/clubManagerApiClient.js";
+import chalk from "chalk";
 
 /**
  * Führt die Zahlungssynchronisation mit Club Manager aus
  * @returns {Promise<Object>} Ergebnis der Operation
  */
 export default async function triggerPaymentSync() {
-  console.log("[Debug] triggerPaymentSync started");
+  console.log(chalk.cyan("[AutoSync] triggerPaymentSync gestartet"));
 
   try {
     const paidOrders = await fetchPaidOrders();
@@ -15,10 +16,14 @@ export default async function triggerPaymentSync() {
     for (const order of paidOrders) {
       // Annahme: clubManagerApiClient hat eine Methode zum Senden der Bestellung
       const res = await clubManagerApiClient.sendPaidOrder(order);
+      console.log(chalk.yellow(`[ClubManager] Antwort: ${res.status || res}`));
       results.push({ orderId: order.id, status: res.status });
     }
     return { success: true, results };
   } catch (error) {
+    console.error(
+      chalk.red("[Error] [AutoSync] Fehler bei triggerPaymentSync:", error)
+    );
     return { success: false, error: error.message };
   }
 }

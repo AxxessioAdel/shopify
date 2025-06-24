@@ -1,18 +1,27 @@
 import fetch from "node-fetch";
+import dotenv from "dotenv";
+dotenv.config();
 
-async function simulateProductSync() {
+const PORT = process.env.CUSTOM_CHECKOUT_PORT;
+const CONTENT_TYPE = process.env.CONTENT_TYPE;
+
+const isDebugLevelInfo = process.env.DEBUG_LEVEL === "info";
+if (isDebugLevelInfo) {
+  console.log(
+    "[Debug] Customer Checkout Test Simulator loaded with debug level info"
+  );
+  console.log("[Debug] PORT:", PORT);
+  console.log("[Debug] CONTENT_TYPE:", CONTENT_TYPE);
+}
+
+async function simulateProductProvisioning() {
   const testPayload = {
     title: "Autogrammkarte Messi",
     description: "Limitierte Auflage",
     vendor: "FC Barcelona",
     product_type: "Autogrammkarte",
     tags: ["Autogramm", "Deluxe", "Messi"],
-    images: [
-      {
-        src: "https://res.cloudinary.com/dhrq96tlr/image/upload/v1749979271/box_dejf0a.png",
-        alt: "Autogrammkarte Messi",
-      },
-    ],
+    image: "https://example.com/image.jpg",
     pricing_groups: [
       { name: "Standard", price: "29.99" },
       { name: "Deluxe", price: "59.99" },
@@ -21,10 +30,10 @@ async function simulateProductSync() {
 
   try {
     const response = await fetch(
-      "http://localhost:3000/api/product-provisioning",
+      `http://localhost:${PORT}/api/product-provisioning`,
       {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": CONTENT_TYPE },
         body: JSON.stringify(testPayload),
       }
     );
@@ -36,4 +45,4 @@ async function simulateProductSync() {
   }
 }
 
-simulateProductSync();
+simulateProductProvisioning();

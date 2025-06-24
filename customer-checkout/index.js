@@ -1,23 +1,41 @@
-// customer-checkout-customer-checkout-backend/index.js
-// Dieses Backend ermöglicht es, Kunden zu erstellen oder zu finden,
-// um sie für den Checkout-Prozess in Shopify zu verwenden.
-
 import express from "express";
 import fetch from "node-fetch";
 import dotenv from "dotenv";
 import cors from "cors";
+import path from "path";
+import { fileURLToPath } from "url";
+import checkoutRouter from "./api/checkout.js";
 
 dotenv.config();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
-app.use(express.static("public"));
+// حذف یا کامنت کردن static middleware مربوط به public
+// app.use(express.static("public"));
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const staticRoot = path.join(__dirname, "../customer-checkout-ui");
+console.log("[Debug] Static root:", staticRoot);
+app.use(express.static(staticRoot));
+
+// اضافه کردن checkoutRouter برای هندل کردن /api/checkout
+app.use("/api", checkoutRouter);
 
 const ADMIN_TOKEN = process.env.CUSTOM_CHECKOUT_APP_ADMIN_API_TOKEN;
 const SHOP_DOMAIN = process.env.SHOPIFY_STORE_DOMAIN;
 const CONTENT_TYPE = process.env.CONTENT_TYPE;
 const PORT = process.env.CUSTOM_CHECKOUT_PORT;
+
+const isDebugLevelInfo = process.env.DEBUG_LEVEL === "info";
+if (isDebugLevelInfo) {
+  console.log("[Debug] Customer Checkout loaded with debug level info");
+  console.log("[Debug] PORT:", PORT);
+  console.log("[Debug] SHOP_DOMAIN:", SHOP_DOMAIN);
+  console.log("[Debug] CONTENT_TYPE:", CONTENT_TYPE);
+  console.log("[Debug] ADMIN_TOKEN:", ADMIN_TOKEN);
+}
 
 // 📌 API zum Erstellen oder Finden eines Kunden
 app.post("/api/createCustomer", async (req, res) => {
@@ -137,6 +155,21 @@ app.post("/api/createCustomer", async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`✅ Backend läuft auf http://localhost:${PORT}`);
+});
+
+// Handle unhandled rejections and exceptions
+process.on("unhandledRejection", (reason, promise) => {
+  console.error("❌ Unhandled Rejection at:", promise, "reason:", reason);
+  // Optional: Send the error to a monitoring service
+});
+
+process.on("uncaughtException", (error) => {
+  console.error("❌ Uncaught Exception:", error);
+  // Optional: Send the error to a monitoring service
+  // Exit the process after logging the error
+  server.close(() => {
+    process.exit(1);
+  });
 });

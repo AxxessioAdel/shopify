@@ -2,7 +2,25 @@ import dotenv from "dotenv";
 import fetch from "node-fetch";
 dotenv.config();
 
-export async function handleProductSync(req, res) {
+const CONTENT_TYPE = process.env.CONTENT_TYPE;
+const PRODUCT_PROVISIONING_SERVICE_ADMIN_API_TOKEN =
+  process.env.PRODUCT_PROVISIONING_SERVICE_ADMIN_API_TOKEN;
+const SHOPIFY_STORE_DOMAIN = process.env.SHOPIFY_STORE_DOMAIN;
+
+const isDebugLevelInfo = process.env.DEBUG_LEVEL === "info";
+if (isDebugLevelInfo) {
+  console.log(
+    "[Debug] Product Provisioning Service loaded with debug level info"
+  );
+  console.log("[Debug] SHOPIFY_STORE_DOMAIN:", SHOPIFY_STORE_DOMAIN);
+  console.log(
+    "[Debug] PRODUCT_PROVISIONING_SERVICE_ADMIN_API_TOKEN:",
+    PRODUCT_PROVISIONING_SERVICE_ADMIN_API_TOKEN
+  );
+  console.log("[Debug] CONTENT_TYPE:", CONTENT_TYPE);
+}
+
+export async function handleProductProvisioning(req, res) {
   try {
     const productPayload = req.body;
     console.log(
@@ -17,7 +35,7 @@ export async function handleProductSync(req, res) {
       "vendor",
       "product_type",
       "tags",
-      "images",
+      "image",
       "pricing_groups",
     ];
     for (const field of requiredFields) {
@@ -28,19 +46,6 @@ export async function handleProductSync(req, res) {
           message: `Missing required field: ${field}`,
         });
       }
-    }
-
-    if (
-      !Array.isArray(productPayload.images) ||
-      productPayload.images.length === 0 ||
-      !productPayload.images[0].src
-    ) {
-      console.error("❌ Ungültige Images-Daten");
-      return res.status(400).json({
-        status: "error",
-        message:
-          "Invalid images data. At least one image with a src is required.",
-      });
     }
 
     if (
@@ -55,13 +60,6 @@ export async function handleProductSync(req, res) {
     }
 
     // Data Mapping für Shopify
-    console.log("🔄 Mapping Produktdaten für Shopify...");
-    // Print all productPayload features in Terminal
-    console.log("📦 Alle Produkt-Features:");
-    Object.entries(productPayload).forEach(([key, value]) => {
-      console.log(`- ${key}:`, value);
-    });
-
     const mappedProduct = {
       product: {
         title: productPayload.title,
@@ -80,21 +78,18 @@ export async function handleProductSync(req, res) {
           option1: pg.name,
           price: pg.price,
         })),
-        images: [{ src: productPayload.images[0].src }],
+        images: [{ src: productPayload.image }],
       },
     };
 
-    const shopifyDomain = process.env.SHOPIFY_STORE_DOMAIN;
-    const shopifyToken =
-      process.env.PRODUCT_PROVISIONING_SERVICE_ADMIN_API_TOKEN;
-
     const response = await fetch(
-      `https://${shopifyDomain}/admin/api/2025-04/products.json`,
+      `https://${SHOPIFY_STORE_DOMAIN}/admin/api/2025-04/products.json`,
       {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
-          "X-Shopify-Access-Token": shopifyToken,
+          "Content-Type": CONTENT_TYPE,
+          "X-Shopify-Access-Token":
+            PRODUCT_PROVISIONING_SERVICE_ADMIN_API_TOKEN,
         },
         body: JSON.stringify(mappedProduct),
       }

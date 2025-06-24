@@ -4,12 +4,10 @@ dotenv.config();
 
 // URL des Club Manager Endpoints aus Umgebungsvariablen laden
 const CLUB_MANAGER_API_URL = process.env.CLUB_MANAGER_API_URL;
-const isDebug = process.env.DEBUG === "true";
-if (isDebug) {
-  console.log(
-    "[ClubManager] CLUB_MANAGER_API_URL geladen:",
-    CLUB_MANAGER_API_URL
-  );
+const isDebugLevelInfo = process.env.DEBUG_LEVEL === "info";
+if (isDebugLevelInfo) {
+  console.log("[Debug] Club Manager API Client loaded with debug level info");
+  console.log("[Debug] CLUB_MANAGER_API_URL:", CLUB_MANAGER_API_URL);
 }
 
 // Funktion zum Senden der Zahlungsdaten an Club Manager
@@ -56,7 +54,7 @@ export async function sendPaymentDataToClubManager(orderData) {
   }
 }
 
-// تابع سازگار با API-based sync
+// API-basierte Synchronisationsfunktion
 export default {
-  sendPaidOrder: sendPaymentDataToClubManager,
+  sendeBezahlteBestellung: sendPaymentDataToClubManager,
 };

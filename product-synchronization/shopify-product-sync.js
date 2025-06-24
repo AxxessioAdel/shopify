@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 import fetch from "node-fetch";
 dotenv.config();
 
-export async function handleProductProvisioning(req, res) {
+export async function handleProductSync(req, res) {
   try {
     const productPayload = req.body;
     console.log(
@@ -17,7 +17,7 @@ export async function handleProductProvisioning(req, res) {
       "vendor",
       "product_type",
       "tags",
-      "image",
+      "images",
       "pricing_groups",
     ];
     for (const field of requiredFields) {
@@ -28,6 +28,19 @@ export async function handleProductProvisioning(req, res) {
           message: `Missing required field: ${field}`,
         });
       }
+    }
+
+    if (
+      !Array.isArray(productPayload.images) ||
+      productPayload.images.length === 0 ||
+      !productPayload.images[0].src
+    ) {
+      console.error("❌ Ungültige Images-Daten");
+      return res.status(400).json({
+        status: "error",
+        message:
+          "Invalid images data. At least one image with a src is required.",
+      });
     }
 
     if (
@@ -42,6 +55,13 @@ export async function handleProductProvisioning(req, res) {
     }
 
     // Data Mapping für Shopify
+    console.log("🔄 Mapping Produktdaten für Shopify...");
+    // Print all productPayload features in Terminal
+    console.log("📦 Alle Produkt-Features:");
+    Object.entries(productPayload).forEach(([key, value]) => {
+      console.log(`- ${key}:`, value);
+    });
+
     const mappedProduct = {
       product: {
         title: productPayload.title,
@@ -60,7 +80,7 @@ export async function handleProductProvisioning(req, res) {
           option1: pg.name,
           price: pg.price,
         })),
-        images: [{ src: productPayload.image }],
+        images: productPayload.images.map((img) => ({ src: img.src })),
       },
     };
 

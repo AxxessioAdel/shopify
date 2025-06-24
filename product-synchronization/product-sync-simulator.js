@@ -1,13 +1,18 @@
 import fetch from "node-fetch";
 
-async function simulateProductProvisioning() {
+async function simulateProductSync() {
   const testPayload = {
     title: "Autogrammkarte Messi",
     description: "Limitierte Auflage",
     vendor: "FC Barcelona",
     product_type: "Autogrammkarte",
     tags: ["Autogramm", "Deluxe", "Messi"],
-    image: "https://example.com/image.jpg",
+    images: [
+      {
+        src: "https://res.cloudinary.com/dhrq96tlr/image/upload/v1749979271/box_dejf0a.png",
+        alt: "Autogrammkarte Messi",
+      },
+    ],
     pricing_groups: [
       { name: "Standard", price: "29.99" },
       { name: "Deluxe", price: "59.99" },
@@ -16,7 +21,7 @@ async function simulateProductProvisioning() {
 
   try {
     const response = await fetch(
-      "http://localhost:3000/api/product-provisioning",
+      "http://localhost:3001/api/product-provisioning",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -31,4 +36,4 @@ async function simulateProductProvisioning() {
   }
 }
 
-simulateProductProvisioning();
+simulateProductSync();

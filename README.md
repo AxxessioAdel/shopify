@@ -1,12 +1,12 @@
-# Shopify Produktbereitstellung & Headless Checkout Integration
+# Shopify Produktbereitstellung & Headless Checkout Product Synchronization
 
 ---
 
-Dieses Projekt bietet eine vollständige Headless-Integration zwischen Club Manager, Shopify und einem Web-Frontend.
+Dieses Projekt bietet eine vollständige Headless-Product-Synchronization zwischen Club Manager, Shopify und einem Web-Frontend.
 
 Es besteht aus zwei unabhängigen Modulen:
 
-1️⃣ **Produktbereitstellungsdienst (Integration Backend)**
+1️⃣ **Produktbereitstellungsdienst (Product Synchronization Backend)**
 
 - Erstellt automatisch Produkte in Shopify basierend auf Webhooks vom Club Manager.
 
@@ -26,7 +26,7 @@ git@github.com:AxxessioAdel/shopify.git
 
 ## ⚙️ Systemübersicht
 
-- Headless Shopify-Integration über die Admin API (Produktbereitstellung)
+- Headless Shopify-Product-Synchronization über die Admin API (Produktbereitstellung)
 - Shopify Storefront API für Checkout-Demo
 - Webhook-basierte Produktsynchronisation via Club Manager
 - Separate Backends für Provisionierung und Checkout
@@ -56,96 +56,66 @@ package-lock.json
 package.json
 README.md
 
-club-manager-simulator/
-│   .env
-│   index.js
-│   package-lock.json
-│   package.json
+club-manager-simulator/           # Simulations- und Sync-Backend für Club Manager & Shopify
+│   .env                         # Umgebungsvariablen für den Simulator
+│   index.js                     # Einstiegspunkt, steuert API, Webhook & Auto-Sync
 │
-├───routes/
-│       paymentConfirmation.js
+│   api/                         # API-Logik für Zahlungsabgleich
+│       fetchPaidOrders.js       # Holt bezahlte Bestellungen von Shopify
+│       triggerPaymentSync.js    # Synchronisiert neue Zahlungen mit Club Manager
 │
-├───utils/
-│       clubManagerApiClient.js
+│   db/                          # Persistenz für Sync-Status
+│       syncState.js             # SQLite-Helper für letzten Sync-Zeitpunkt
+│       syncState.sqlite         # SQLite-Datenbank
 │
-└───webhooks/
-        ordersPaidWebhook.js
-
-club-manager-simulator-ui/
+│   routes/                      # Express-Routen
+│       paymentConfirmation.js   # Route für Zahlungsbestätigung
+│
+│   utils/                       # Hilfsfunktionen
+│       clubManagerApiClient.js  # API-Client für Club Manager
+│
+│   webhooks/                    # Webhook-Handler
+│       ordersPaidWebhook.js     # Webhook für bezahlte Bestellungen
+│
+club-manager-simulator-ui/       # Frontend für Produktverwaltung & Test
 │   create-product.html
 │   index.html
 │   update-product.html
+│   js/
+│       api-client.js
+│       utils.js
 │
-└───js/
-        api-client.js
-        utils.js
-
-customer-checkout-backend/
-    .env
-    checkout-handler.js
-    checkout.js
-    create-customer.js
-    index.js
-    product-provisioning.js
-    test-simulator.js
-
-integration-backend/
-    .env
-    index.js
-    product-sync-simulator.js
-    registerWebhook.js
-    shopify-product-sync.js
-
-public/
-    create-customer.html
-    demo-purchase.html
-    script.js
-    test-product.html
+customer-checkout/       # Backend für Checkout- und Kundensimulation
+│   checkout-handler.js
+│   checkout.js
+│   create-customer.js
+│   index.js
+│   product-provisioning.js
+│   test-simulator.js
+│
+product-synchronization/             # Backend für Produktbereitstellung & Webhook-Registrierung
+│   fetchPaidOrders.js
+│   index.js
+│   product-sync-simulator.js
+│   registerWebhook.js
+│   shopify-product-sync.js
+│
+public/                          # Statische Testseiten
+│   create-customer.html
+│   demo-purchase.html
+│   script.js
+│   test-product.html
 ```
 
----
+### Kurzbeschreibung der Hauptmodule:
 
-### Bereichs- und Dateibeschreibungen
+- **club-manager-simulator/**: Simuliert und synchronisiert Zahlungen zwischen Shopify und Club Manager. Enthält API, Webhook, Datenbank und Auto-Sync-Logik.
+- **club-manager-simulator-ui/**: Einfache Weboberfläche zur Produktverwaltung und Testzwecken.
+- **customer-checkout/**: Simuliert den Checkout-Prozess und die Kundenerstellung für Testzwecke.
+- **product-synchronization/**: Verantwortlich für die Produktbereitstellung in Shopify und die Registrierung von Webhooks.
+- **public/**: Enthält statische HTML-Seiten für Demo- und Testzwecke.
 
-#### Projekt-Root
-
-- `.gitignore`, `package.json`, `package-lock.json`, `README.md`, `Berichten.md`: Konfigurations- und Dokumentationsdateien für das gesamte Projekt.
-
-#### club-manager-simulator
-
-- **index.js**: Startpunkt und Server für den Club Manager Simulator.
-- **.env**: Umgebungsvariablen für den Simulator.
-- **routes/paymentConfirmation.js**: Route für Zahlungsbestätigungen.
-- **utils/clubManagerApiClient.js**: Hilfsfunktionen für die Kommunikation mit der Club Manager API.
-- **webhooks/ordersPaidWebhook.js**: Webhook-Handler für eingehende Zahlungsbenachrichtigungen von Shopify.
-
-#### club-manager-simulator-ui
-
-- **index.html, create-product.html, update-product.html**: Benutzeroberfläche zur Produktverwaltung.
-- **js/api-client.js**: API-Client für Backend-Kommunikation.
-- **js/utils.js**: UI-Hilfsfunktionen.
-
-#### customer-checkout-backend
-
-- **index.js**: Einstiegspunkt für den Checkout-Backend-Server.
-- **.env**: Umgebungsvariablen.
-- **checkout.js, checkout-handler.js**: Checkout-Logik und Handler.
-- **create-customer.js**: Anlage neuer Kunden in Shopify.
-- **product-provisioning.js**: Produktbereitstellung für den Checkout.
-- **test-simulator.js**: Test- und Simulationswerkzeuge für den Checkout-Prozess.
-
-#### integration-backend
-
-- **index.js**: Einstiegspunkt für den Produktbereitstellungsservice.
-- **.env**: Umgebungsvariablen.
-- **shopify-product-sync.js**: Synchronisation von Produkten mit Shopify.
-- **product-sync-simulator.js**: Test-Simulator für die Produktsynchronisation.
-- **registerWebhook.js**: Registrierung und Verwaltung von Webhooks in Shopify.
-
-#### public
-
-- **create-customer.html, demo-purchase.html, test-product.html**: Demo-Seiten für Kundenanlage und Testkäufe.
-- **script.js**: Clientseitige Skripte für die Demo-Seiten.
+Jedes Modul ist klar abgegrenzt und unterstützt eine saubere, wartbare Projektstruktur.
 
 ---
 
@@ -161,49 +131,45 @@ npm install
 
 **Hinweis:** Jeder Service hat eine eigene `package.json`.
 
-### 2️⃣ `.env`-Dateien konfigurieren
+### 2️⃣ `.env`-Datei konfigurieren
 
-#### integration-backend/.env
+Alle Umgebungsvariablen wurden jetzt in einer einzigen `.env`-Datei im Hauptverzeichnis des Projekts zusammengeführt. Diese Datei enthält sämtliche Konfigurationswerte für alle Backends und Services (Shopify, Club Manager, Product Synchronization, Tokens, Ports usw.).
 
-```
-SHOPIFY_STORE_DOMAIN=your-store.myshopify.com
-SHOPIFY_ADMIN_API_TOKEN=shpat_xxx
-```
-
-#### club-manager-simulator/.env
+**Beispielhafte Inhalte der `.env`:**
 
 ```
-PROVISIONING_API_URL=http://localhost:3001/api/product-provisioning
-CLUB_MANAGER_PORT=3002
+# Shopify-Konfiguration
+SHOPIFY_STORE_DOMAIN=...
+SHOPIFY_WEBHOOK_SECRET=...
+SHOPIFY_API_URL=...
+WEBHOOK_ADDRESS=...
+
+# API-URLs
+PROVISIONING_API_URL=...
+CLUB_MANAGER_API_URL=...
+
+# Tokens
+CUSTOM_CHECKOUT_APP_ADMIN_API_TOKEN=...
+PRODUCT_PROVISIONING_SERVICE_ADMIN_API_TOKEN=...
+CUSTOM_CHECKOUT_APP_TOKEN=...
+
+# Ports
+CLUB_MANAGER_PORT=...
+PRODUCT_SYNCHRONIZATION_PORT=...
+CUSTOM_CHECKOUT_PORT=...
+
+# Weitere Einstellungen
+DEBUG=...
+USE_WEBHOOK=...
+CONTENT_TYPE=...
+DEBUG_LEVEL=...
 ```
+
+> **Hinweis:** Die `.env`-Datei muss im Hauptverzeichnis (`/shopify/.env`) liegen und vor dem Starten der Server korrekt ausgefüllt werden. Alle Services lesen ihre Konfiguration zentral aus dieser Datei.
 
 ---
 
-## 🚀 Lokale Startreihenfolge
-
-1️⃣ Integration Backend starten:
-
-```bash
-cd integration-backend
-node index.js
-```
-
-2️⃣ Club Manager Simulator starten:
-
-```bash
-cd club-manager-simulator
-node index.js
-```
-
-3️⃣ Test-Webhooks auslösen:
-
-```bash
-Invoke-WebRequest -Method POST http://localhost:3002/simulate-webhook
-```
-
----
-
-## 🌐 Webhook Public Deployment & Live Integration
+## 🌐 Webhook Public Deployment & Live Product Synchronization
 
 ### Ziel
 
@@ -211,7 +177,7 @@ Der Produktbereitstellungsdienst muss öffentlich erreichbar sein, damit Club Ma
 
 ---
 
-### 1️⃣ Lokale Bereitstellung mit ngrok (für Integrationstests & Demo)
+### 1️⃣ Lokale Bereitstellung mit ngrok (für Product Synchronization-Tests & Demo)
 
 #### a) ngrok Setup
 
@@ -335,7 +301,7 @@ Club Manager → Webhook → Produktbereitstellungsdienst → Shopify Admin API 
 
 - Benutzerfreundliche Oberfläche zum Anlegen neuer Produkte.
 - Unterstützt das Hinzufügen von Produktdetails, Varianten und Tags.
-- Sendet Daten ans Backend zur Shopify-Integration.
+- Sendet Daten ans Backend zur Shopify-Product-Synchronization.
 
 2️⃣ **Produkte aktualisieren**
 
@@ -381,3 +347,127 @@ Diese Platzhalter werden in den Projektdateien verwendet. Für Zugriff auf die e
 - Statische öffentliche DNS statt ngrok für dauerhafte Erreichbarkeit
 - CI/CD-Pipeline via GitHub Actions für automatisierte Releases
 - Secrets-Management für API-Tokens (z.B. AWS Secrets Manager, HashiCorp Vault)
+
+---
+
+## 📦 Prüfung erfolgreicher Kunden-Zahlungen
+
+In diesem Projekt wurden zwei Strategien zur Erkennung erfolgreicher Zahlungen im Shopify-Shop implementiert:
+
+### ✅ Kombinierte Strategie: Webhook + API Polling
+
+Für eine stabile, echtzeitnahe und ausfallsichere Lösung nutzen wir einen kombinierten Ansatz aus zwei Methoden:
+
+---
+
+### 🔁 Methode 1: API-basiertes Polling (periodische Kontrolle)
+
+Erfolgreiche Zahlungen werden regelmäßig über die Shopify Admin API abgefragt. Diese Methode umfasst folgende Schritte:
+
+- Abruf der Bestellungen mit `financial_status=paid` über `fetchPaidOrders.js`
+- Filterung der Bestellungen mit `processed_at_min`, um Duplikate zu vermeiden
+- Speicherung des letzten Sync-Zeitpunkts in einer SQLite-Datenbank (`syncState.sqlite`)
+- Übermittlung neuer Bestellungen an Club Manager via `sendPaymentDataToClubManager`
+- Automatische Ausführung alle 60 Sekunden mittels `setInterval` in `index.js`
+
+#### 📁 Relevante Dateien:
+
+- `club-manager-simulator/api/fetchPaidOrders.js`
+- `club-manager-simulator/api/triggerPaymentSync.js`
+- `club-manager-simulator/db/syncState.js`
+- `club-manager-simulator/index.js`
+
+---
+
+### ⚡ Methode 2: Webhook-basiert (Echtzeit)
+
+Hierbei wird der offizielle Shopify-Webhook für Zahlungen genutzt:
+
+- Bei erfolgreicher Zahlung sendet Shopify einen POST-Request an `/webhooks/orders/paid`
+- Die Bestellung wird per HMAC validiert, verarbeitet und an Club Manager weitergeleitet
+- Der Webhook-Endpunkt ist nur aktiv, wenn `USE_WEBHOOK=true` in der `.env` gesetzt ist
+
+#### 📁 Relevante Datei:
+
+- `club-manager-simulator/webhooks/ordersPaidWebhook.js`
+
+---
+
+### 🧠 Umschalten zwischen den Methoden
+
+Über die Umgebungsvariable `USE_WEBHOOK` in der Datei `.env`:
+
+- `USE_WEBHOOK=true` → Nur Webhook-Modus ist aktiv
+- `USE_WEBHOOK=false` → Nur API-Polling ist aktiv
+
+---
+
+Diese Struktur ermöglicht eine präzise Vergleichbarkeit, Testbarkeit und bessere Entscheidungsfindung im Projekt.
+
+---
+
+## 🚀 Server starten
+
+Um die verschiedenen Server-Komponenten des Projekts zu starten, verwenden Sie die folgenden Befehle:
+
+- **Club Manager Simulator starten:**
+  ```
+  npm run start:club
+  ```
+- **Customer Checkout Backend starten:**
+  ```
+  npm run start:checkout
+  ```
+- **Product Synchronization Backend starten:**
+  ```
+  npm run start:productsync
+  ```
+
+Jeder Befehl startet den jeweiligen Server auf dem in der `.env`-Datei konfigurierten Port.
+
+---
+
+### 📝 Aufgaben der einzelnen Server
+
+- **Club Manager Simulator**
+
+  - Simuliert das Verhalten des Club Manager-Systems.
+  - Sendet Testdaten und Webhooks an die anderen Komponenten.
+  - Dient zur lokalen Entwicklung und zum Testen der Integration.
+
+- **Customer Checkout Backend**
+
+  - Stellt eine API für den Kunden-Checkout-Prozess bereit.
+  - Verwaltet die Erstellung von Kunden, Warenkörben und Checkout-Links.
+  - Kommuniziert mit Shopify über die Storefront API.
+
+#### 🛒 Testkauf über das Demo-Frontend
+
+Um den Checkout-Prozess zu testen, steht eine Beispielseite zur Verfügung:
+
+1. **Server starten:**  
+   Starten Sie das Customer Checkout Backend mit  
+   ```
+   npm run start:checkout
+   ```
+   (Standard-Port: 3000, siehe `.env`)
+
+2. **Demo-Seite aufrufen:**  
+   Öffnen Sie im Browser  
+   ```
+   http://localhost:3000/demo-purchase.html
+   ```
+
+3. **Formular ausfüllen:**  
+   Geben Sie die erforderlichen Kundendaten und eine Variant-ID ein.
+
+4. **Kauf abschließen:**  
+   Nach Klick auf „Kaufen“ wird ein Test-Checkout über die Shopify Storefront API durchgeführt.  
+   Sie werden automatisch zum generierten Checkout-Link weitergeleitet.
+
+> Diese Seite dient ausschließlich zu Test- und Entwicklungszwecken.
+
+- **Product Synchronization Backend**
+  - Synchronisiert Produkte zwischen Club Manager und Shopify.
+  - Empfängt Webhooks vom Club Manager und erstellt/aktualisiert Produkte in Shopify.
+  - Dient als Bindeglied für die Produktbereitstellung.

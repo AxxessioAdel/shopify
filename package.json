@@ -4,7 +4,12 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "start:club": "node server.js club",
+    "start:checkout": "node server.js checkout",
+    "start:integration": "node server.js integration",
+    "start:productsync": "node server.js productsync"
   },
   "keywords": [],
   "author": "",
@@ -12,6 +17,7 @@
   "description": "",
   "dependencies": {
     "axios": "^1.10.0",
+    "chalk": "^5.4.1",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",

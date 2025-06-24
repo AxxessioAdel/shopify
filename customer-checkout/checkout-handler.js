@@ -1,5 +1,16 @@
-const CONTENT_TYPE = "application/json";
-const STOREFRONT_ACCESS_TOKEN = "6e37ff37b5f96a6df92a41f64534b90d";
+import dotenv from "dotenv";
+import fetch from "node-fetch";
+dotenv.config();
+
+const CONTENT_TYPE = process.env.CONTENT_TYPE;
+const CUSTOM_CHECKOUT_APP_TOKEN = process.env.CUSTOM_CHECKOUT_APP_TOKEN;
+
+const isDebugLevelInfo = process.env.DEBUG_LEVEL === "info";
+if (isDebugLevelInfo) {
+  console.log("[Debug] Shopify API Client loaded with debug level info");
+  console.log("[Debug] CONTENT_TYPE:", CONTENT_TYPE);
+  console.log("[Debug] CUSTOM_CHECKOUT_APP_TOKEN:", CUSTOM_CHECKOUT_APP_TOKEN);
+}
 
 export async function createCart() {
   const query = `
@@ -20,7 +31,7 @@ export async function createCart() {
       method: "POST",
       headers: {
         "Content-Type": CONTENT_TYPE,
-        "X-Shopify-Storefront-Access-Token": STOREFRONT_ACCESS_TOKEN,
+        "X-Shopify-Storefront-Access-Token": CUSTOM_CHECKOUT_APP_TOKEN,
       },
       body,
     }
@@ -69,7 +80,7 @@ export async function addProductToCart(cartId, merchandiseId, attributes = []) {
       method: "POST",
       headers: {
         "Content-Type": CONTENT_TYPE,
-        "X-Shopify-Storefront-Access-Token": STOREFRONT_ACCESS_TOKEN,
+        "X-Shopify-Storefront-Access-Token": CUSTOM_CHECKOUT_APP_TOKEN,
       },
       body,
     }
@@ -103,7 +114,7 @@ export async function getCheckoutUrl(cartId) {
       method: "POST",
       headers: {
         "Content-Type": CONTENT_TYPE,
-        "X-Shopify-Storefront-Access-Token": STOREFRONT_ACCESS_TOKEN,
+        "X-Shopify-Storefront-Access-Token": CUSTOM_CHECKOUT_APP_TOKEN,
       },
       body,
     }

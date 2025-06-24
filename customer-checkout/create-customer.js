@@ -1,3 +1,17 @@
+import dotenv from "dotenv";
+dotenv.config();
+
+const PORT = process.env.CUSTOM_CHECKOUT_PORT;
+const CONTENT_TYPE = process.env.CONTENT_TYPE;
+
+const isDebugLevelInfo = process.env.DEBUG_LEVEL === "info";
+if (isDebugLevelInfo) {
+  console.log("[Debug] Customer Checkout loaded with debug level info");
+  console.log("[Debug] PORT:", PORT);
+  console.log("[Debug] CONTENT_TYPE:", CONTENT_TYPE);
+  console.log("[Debug] CUSTOM_CHECKOUT_PORT:", PORT);
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("customer-form");
 
@@ -18,11 +32,14 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     try {
-      const response = await fetch("http://localhost:3000/api/createCustomer", {
-        method: "POST",
-        headers: { "Content-Type": CONTENT_TYPE },
-        body: JSON.stringify(payload),
-      });
+      const response = await fetch(
+        `http://localhost:${PORT}/api/createCustomer`,
+        {
+          method: "POST",
+          headers: { "Content-Type": CONTENT_TYPE },
+          body: JSON.stringify(payload),
+        }
+      );
 
       const result = await response.json();
 
@@ -60,12 +77,3 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
-
-const CONTENT_TYPE =
-  window.ENV && window.ENV.CONTENT_TYPE
-    ? window.ENV.CONTENT_TYPE
-    : "application/json";
-const CUSTOM_CHECKOUT_APP_TOKEN =
-  window.ENV && window.ENV.CUSTOM_CHECKOUT_APP_TOKEN
-    ? window.ENV.CUSTOM_CHECKOUT_APP_TOKEN
-    : "6e37ff37b5f96a6df92a41f64534b90d";

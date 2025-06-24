@@ -1,63 +1,79 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
+import chalk from "chalk";
 import paymentConfirmation from "./routes/paymentConfirmation.js";
 
 dotenv.config();
 const app = express();
 
-// Load .env variable
+// Lade Umgebungsvariablen
 const PORT = process.env.CLUB_MANAGER_PORT;
 const PROVISIONING_API_URL = process.env.PROVISIONING_API_URL;
-const useWebhook = process.env.USE_WEBHOOK === "true";
-const shop = process.env.SHOPIFY_SHOP;
-const accessToken = process.env.CUSTOM_CHECKOUT_APP_ADMIN_API_TOKEN;
+const CONTENT_TYPE = process.env.CONTENT_TYPE;
 
-console.log("[Debug] index.js gestartet");
-// console.log("[Debug] PORT:", PORT);
-// console.log("[Debug] PROVISIONING_API_URL:", PROVISIONING_API_URL);
-// console.log("[Debug] USE_WEBHOOK:", useWebhook);
-// console.log("[Debug] SHOPIFY_SHOP:", shop);
-// console.log("[Debug] CUSTOM_CHECKOUT_APP_ADMIN_API_TOKEN:", accessToken);
+const isDebugLevelInfo = process.env.DEBUG_LEVEL === "info";
+if (isDebugLevelInfo) {
+  console.log("[Debug] Club Manager Simulator loaded with debug level info");
+  console.log("[Debug] PORT:", PORT);
+  console.log("[Debug] PROVISIONING_API_URL:", PROVISIONING_API_URL);
+  console.log("[Debug] CONTENT_TYPE:", CONTENT_TYPE);
+}
 
-// CORS support
+// CORS-Unterstützung
 app.use(cors());
 
-// 🟢 Raw body parser MUST come first before JSON parser
+// 🟢 Raw body parser MUSS vor dem JSON-Parser kommen
 app.use(
   "/webhooks",
   express.raw({
-    type: "application/json",
+    type: CONTENT_TYPE,
     verify: (req, res, buf) => {
       req.rawBody = buf;
     },
   })
 );
 
-// Then regular JSON parser for everything else
+// Dann regulärer JSON-Parser für alles andere
 app.use(express.json());
 
-// Routes
+// Routen
 app.use("/api", paymentConfirmation);
 
-if (useWebhook) {
-  import("./webhooks/ordersPaidWebhook.js").then(
-    ({ default: ordersPaidWebhook }) => {
-      app.use("/webhooks", ordersPaidWebhook);
-      console.log("[Server] Webhook route aktiviert.");
-    }
-  );
-} else {
-  console.log("[Server] Webhook deaktiviert. Nutze stattdessen API-Modus.");
-  import("./api/triggerPaymentSync.js").then(({ default: triggerSync }) => {
-    app.get("/sync/payments", async (req, res) => {
-      const result = await triggerSync();
-      res.status(200).json(result);
-    });
-  });
-}
+// Webhook-Handler immer aktivieren
+import("./webhooks/ordersPaidWebhook.js").then(
+  ({ default: ordersPaidWebhook }) => {
+    app.use("/webhooks", ordersPaidWebhook);
+    console.log(chalk.green("[Webhook] gestartet und Route aktiviert."));
+  }
+);
 
-// Simulation route for testing
+// API-Endpunkt für manuelles Auslösen der Zahlungssynchronisation
+import("./api/triggerPaymentSync.js").then(({ default: triggerSync }) => {
+  app.get("/sync/payments", async (req, res) => {
+    const result = await triggerSync();
+    res.status(200).json(result);
+  });
+
+  // === Automatische Synchronisation: Alle 60 Sekunden ausführen ===
+
+  console.log(chalk.cyan("[AutoSync] gestartet (Intervall 60s)"));
+  setInterval(async () => {
+    console.log(
+      chalk.red("\n************ API Strategie: Automatischer Sync ************")
+    );
+    console.log(chalk.cyan("[AutoSync] Triggering..."));
+    try {
+      const result = await triggerSync();
+      console.log(chalk.cyan("[AutoSync] Sync result:"), result);
+    } catch (err) {
+      console.error(chalk.red("[Error] [AutoSync] Fehler:", err));
+    }
+  }, 60000);
+  // === Ende der automatischen Synchronisation ===
+});
+
+// Simulationsroute für Testzwecke
 app.post("/simulate-webhook", async (req, res) => {
   const payload = {
     title: "Autogrammkarte Messi",
@@ -80,20 +96,26 @@ app.post("/simulate-webhook", async (req, res) => {
   try {
     const response = await fetch(PROVISIONING_API_URL, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": CONTENT_TYPE },
       body: JSON.stringify(payload),
     });
 
     const result = await response.json();
-    console.log("✅ Webhook erfolgreich gesendet:", result);
+    console.log(chalk.green("[Webhook] Webhook erfolgreich gesendet:"), result);
     res.status(200).json(result);
   } catch (error) {
-    console.error("❌ Fehler beim Senden des Webhooks:", error.message);
+    console.error(
+      chalk.red("[Error] Fehler beim Senden des Webhooks:", error.message)
+    );
     res.status(500).json({ error: "Fehler bei der Webhook-Simulation" });
   }
 });
 
-// Start server
+// Server starten
 app.listen(PORT, () => {
-  console.log(`✅ Club Manager Simulator läuft auf http://localhost:${PORT}`);
+  console.log(
+    chalk.yellow(
+      `✅ [ClubManager] Club Manager Simulator läuft auf http://localhost:${PORT}`
+    )
+  );
 });
