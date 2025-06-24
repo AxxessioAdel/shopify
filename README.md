@@ -139,7 +139,8 @@ Führen Sie im Hauptverzeichnis des Projekts folgenden Befehl aus, um alle benö
 ```bash
 npm install
 ```
-*Installiert alle in der zentralen `package.json` definierten Pakete (z.B. express, axios, dotenv, node-fetch, cors, chalk, better-sqlite3, usw.).*
+
+_Installiert alle in der zentralen `package.json` definierten Pakete (z.B. express, axios, dotenv, node-fetch, cors, chalk, better-sqlite3, usw.)._
 
 > **Hinweis:** Sie müssen keine weiteren `npm install`-Befehle in Unterordnern ausführen. Die zentrale Installation reicht für alle Backends und Services aus.
 
@@ -266,9 +267,9 @@ Sobald ein Kunde einen Kauf abgeschlossen hat:
 [Webhook] Order #1039 () verarbeitet.
 [Webhook] Zahlungsstatus ist "paid". Sende Daten an Club Manager...
 [ClubManager] Zahlungsdaten empfangen: {
-  order_id: 7280665002248,
+  order_id: 7...248,
   email: '',
-  phone: '+4917658869339',
+  phone: '+491...',
   total_price: '9.95',
   ...
 }
@@ -460,14 +461,17 @@ Jeder Befehl startet den jeweiligen Server auf dem in der `.env`-Datei konfiguri
 Um den Checkout-Prozess zu testen, steht eine Beispielseite zur Verfügung:
 
 1. **Server starten:**  
-   Starten Sie das Customer Checkout Backend mit  
+   Starten Sie das Customer Checkout Backend mit
+
    ```
    npm run start:checkout
    ```
+
    (Standard-Port: 3000, siehe `.env`)
 
 2. **Demo-Seite aufrufen:**  
-   Öffnen Sie im Browser  
+   Öffnen Sie im Browser
+
    ```
    http://localhost:3000/demo-purchase.html
    ```
