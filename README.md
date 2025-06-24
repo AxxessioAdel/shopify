@@ -50,42 +50,47 @@ git@github.com:AxxessioAdel/shopify.git
 ## 🔧 Projektstruktur
 
 ```
+.env
 .gitignore
 Berichten.md
 package-lock.json
 package.json
 README.md
+server.js
 
-club-manager-simulator/           # Simulations- und Sync-Backend für Club Manager & Shopify
-│   .env                         # Umgebungsvariablen für den Simulator
-│   index.js                     # Einstiegspunkt, steuert API, Webhook & Auto-Sync
+club-manager-simulator/
+│   index.js
+│   package-lock.json
+│   package.json
 │
-│   api/                         # API-Logik für Zahlungsabgleich
-│       fetchPaidOrders.js       # Holt bezahlte Bestellungen von Shopify
-│       triggerPaymentSync.js    # Synchronisiert neue Zahlungen mit Club Manager
+├── api/
+│     fetchPaidOrders.js
+│     triggerPaymentSync.js
 │
-│   db/                          # Persistenz für Sync-Status
-│       syncState.js             # SQLite-Helper für letzten Sync-Zeitpunkt
-│       syncState.sqlite         # SQLite-Datenbank
+├── db/
+│     syncState.js
+│     syncState.sqlite
+│     testSyncState.js
 │
-│   routes/                      # Express-Routen
-│       paymentConfirmation.js   # Route für Zahlungsbestätigung
+├── routes/
+│     paymentConfirmation.js
 │
-│   utils/                       # Hilfsfunktionen
-│       clubManagerApiClient.js  # API-Client für Club Manager
+├── utils/
+│     clubManagerApiClient.js
 │
-│   webhooks/                    # Webhook-Handler
-│       ordersPaidWebhook.js     # Webhook für bezahlte Bestellungen
-│
-club-manager-simulator-ui/       # Frontend für Produktverwaltung & Test
+└── webhooks/
+      ordersPaidWebhook.js
+
+club-manager-simulator-ui/
 │   create-product.html
 │   index.html
 │   update-product.html
-│   js/
-│       api-client.js
-│       utils.js
 │
-customer-checkout/       # Backend für Checkout- und Kundensimulation
+└── js/
+      api-client.js
+      utils.js
+
+customer-checkout/
 │   checkout-handler.js
 │   checkout.js
 │   create-customer.js
@@ -93,18 +98,24 @@ customer-checkout/       # Backend für Checkout- und Kundensimulation
 │   product-provisioning.js
 │   test-simulator.js
 │
-product-synchronization/             # Backend für Produktbereitstellung & Webhook-Registrierung
-│   fetchPaidOrders.js
-│   index.js
-│   product-sync-simulator.js
-│   registerWebhook.js
-│   shopify-product-sync.js
-│
-public/                          # Statische Testseiten
+└── api/
+      checkout.js
+
+customer-checkout-ui/
 │   create-customer.html
 │   demo-purchase.html
 │   script.js
 │   test-product.html
+│
+└── js/
+      checkout-client.js
+
+product-synchronization/
+    fetchPaidOrders.js
+    index.js
+    product-sync-simulator.js
+    registerWebhook.js
+    shopify-product-sync.js
 ```
 
 ### Kurzbeschreibung der Hauptmodule:
@@ -121,15 +132,18 @@ Jedes Modul ist klar abgegrenzt und unterstützt eine saubere, wartbare Projekts
 
 ## 🛠 Installation & Setup
 
-### 1️⃣ Grundinstallation pro Service
+### 1️⃣ Abhängigkeiten installieren
 
-Navigiere in die jeweiligen Unterverzeichnisse und führe aus:
+Führen Sie im Hauptverzeichnis des Projekts folgenden Befehl aus, um alle benötigten Pakete für alle Server zentral zu installieren:
 
 ```bash
 npm install
 ```
+*Installiert alle in der zentralen `package.json` definierten Pakete (z.B. express, axios, dotenv, node-fetch, cors, chalk, better-sqlite3, usw.).*
 
-**Hinweis:** Jeder Service hat eine eigene `package.json`.
+> **Hinweis:** Sie müssen keine weiteren `npm install`-Befehle in Unterordnern ausführen. Die zentrale Installation reicht für alle Backends und Services aus.
+
+> **Hinweis für Windows-Nutzer:** Für die Installation von `better-sqlite3` werden ggf. Build Tools benötigt. Siehe [Troubleshooting-Guide](https://github.com/WiseLibs/better-sqlite3/blob/master/docs/troubleshooting.md) für Details zur Einrichtung auf Windows.
 
 ### 2️⃣ `.env`-Datei konfigurieren
 
