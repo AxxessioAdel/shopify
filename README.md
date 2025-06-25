@@ -47,7 +47,7 @@ git@github.com:AxxessioAdel/shopify.git
 
 ---
 
-## 🔧 Projektstruktur
+## 🔧 Projektstruktur (aktualisiert)
 
 ```
 .env
@@ -62,6 +62,7 @@ club-manager-simulator/
 │   index.js
 │   package-lock.json
 │   package.json
+│   server-central.js
 │
 ├── api/
 │     fetchPaidOrders.js
@@ -82,13 +83,28 @@ club-manager-simulator/
       ordersPaidWebhook.js
 
 club-manager-simulator-ui/
+├── product-manager/
 │   create-product.html
+│   delete-product.html
 │   index.html
+│   preview-product.html
 │   update-product.html
 │
-└── js/
-      api-client.js
-      utils.js
+│   js/
+│     api-client.js
+│     create-product.js
+│     delete-product.js
+│     preview-product.js
+│     update-product.js
+│     utils.js
+│
+└── purchase/
+    create-customer.html
+    demo-purchase.html
+    script.js
+    js/
+      checkout-client.js
+      create-customer.js
 
 customer-checkout/
 │   checkout-handler.js
@@ -101,15 +117,6 @@ customer-checkout/
 └── api/
       checkout.js
 
-customer-checkout-ui/
-│   create-customer.html
-│   demo-purchase.html
-│   script.js
-│   test-product.html
-│
-└── js/
-      checkout-client.js
-
 product-synchronization/
     fetchPaidOrders.js
     index.js
@@ -118,15 +125,17 @@ product-synchronization/
     shopify-product-sync.js
 ```
 
-### Kurzbeschreibung der Hauptmodule:
+### Kurze Beschreibung der Hauptordner und -dateien
 
-- **club-manager-simulator/**: Simuliert und synchronisiert Zahlungen zwischen Shopify und Club Manager. Enthält API, Webhook, Datenbank und Auto-Sync-Logik.
-- **club-manager-simulator-ui/**: Einfache Weboberfläche zur Produktverwaltung und Testzwecken.
-- **customer-checkout/**: Simuliert den Checkout-Prozess und die Kundenerstellung für Testzwecke.
-- **product-synchronization/**: Verantwortlich für die Produktbereitstellung in Shopify und die Registrierung von Webhooks.
-- **public/**: Enthält statische HTML-Seiten für Demo- und Testzwecke.
+- **club-manager-simulator/**: Zentrale Serverlogik, API-Endpunkte, Webhooks und Datenbanksynchronisation für Zahlungen und Produktdaten. Enthält alle Backend-Funktionen für die Integration zwischen Club Manager und Shopify.
+- **club-manager-simulator-ui/**: Web-Frontend für Produktverwaltung und Testkäufe. Unterteilt in Produktmanagement und Kauf-/Checkout-Simulation.
+- **customer-checkout/**: Backend-Logik für den Checkout-Prozess, Kundenerstellung und Test-Simulationen. Wird als Router im zentralen Server eingebunden.
+- **product-synchronization/**: Backend für Produktsynchronisation, Webhook-Registrierung und Kommunikation mit der Shopify Admin API.
+- **.env**: Zentrale Konfigurationsdatei für alle Umgebungsvariablen (API-Keys, Ports, Tokens etc.).
+- **server-central.js**: Startpunkt des zentralen Servers, der alle Module als Router einbindet und die gesamte API sowie statische Inhalte bereitstellt.
+- **README.md**: Diese Dokumentation.
 
-Jedes Modul ist klar abgegrenzt und unterstützt eine saubere, wartbare Projektstruktur.
+Jede Komponente ist klar abgegrenzt und unterstützt eine modulare, wartbare Projektstruktur.
 
 ---
 
@@ -199,14 +208,14 @@ Der Produktbereitstellungsdienst muss öffentlich erreichbar sein, damit Club Ma
 - Installiere ngrok: [https://ngrok.com/download](https://ngrok.com/download)
 - Authentifiziere deinen Account:
 
-```bash
+```powershell
 ngrok config add-authtoken <YOUR_AUTH_TOKEN>
 ```
 
 #### b) ngrok Tunnel starten
 
-```bash
-ngrok http 3001
+```powershell
+ngrok http 4000
 ```
 
 ngrok erzeugt eine öffentliche URL, z.B.:
@@ -220,8 +229,10 @@ https://abcd-1234.ngrok-free.app
 Dieser Endpunkt wird dem Club Manager bereitgestellt:
 
 ```
-https://abcd-1234.ngrok-free.app/api/product-provisioning
+https://abcd-1234.ngrok-free.app/webhooks/orders-paid
 ```
+
+> Hinweis: Die URL ändert sich bei jedem Neustart von ngrok!
 
 ---
 
@@ -244,10 +255,10 @@ Gehe im Shopify Admin zu:
 
 2️⃣ **Verwendung von ngrok**
 
-Vor jedem Test muss ein neuer öffentlicher Tunnel zu deinem lokalen Server gestartet werden:
+Starte vor jedem Test einen öffentlichen Tunnel zu deinem lokalen Server mit:
 
-```bash
-ngrok http 3002
+```powershell
+ngrok http 4000
 ```
 
 - Notiere die öffentliche URL
@@ -408,20 +419,11 @@ Hierbei wird der offizielle Shopify-Webhook für Zahlungen genutzt:
 
 ---
 
-### 🧠 Umschalten zwischen den Methoden
-
-Über die Umgebungsvariable `USE_WEBHOOK` in der Datei `.env`:
-
-- `USE_WEBHOOK=true` → Nur Webhook-Modus ist aktiv
-- `USE_WEBHOOK=false` → Nur API-Polling ist aktiv
+Die Umschaltung zwischen Webhook- und API-Polling-Modus erfolgt nun automatisch im zentralen Server. Es ist keine manuelle Anpassung der `.env`-Datei mehr erforderlich. Der Server erkennt selbstständig, welche Strategie verwendet werden soll und steuert den Synchronisationsprozess entsprechend.
 
 ---
 
-Diese Struktur ermöglicht eine präzise Vergleichbarkeit, Testbarkeit und bessere Entscheidungsfindung im Projekt.
-
----
-
-## 🚀 Server starten (Neue Struktur)
+## 🚀 Server starten
 
 Nach der Integration aller Module in einen zentralen Server erfolgt der Projektstart wie folgt:
 
@@ -460,14 +462,6 @@ Alle HTML-Dateien des Projekts sind jetzt über folgende (bzw. ähnliche) Pfade 
 ### 🛒 Testen von Checkout und weiteren Funktionen
 
 Um Checkout und andere Funktionen zu testen, genügt es, den zentralen Server zu starten und die gewünschten Seiten im Browser zu öffnen. Es ist kein separater Start mehrerer Server oder die Nutzung verschiedener Ports nötig.
-
----
-
-## Entfernen und Ersetzen alter Abschnitte
-
-Die folgenden Abschnitte zur separaten Ausführung der einzelnen Server (npm run start:...) und zu alten Ports müssen entfernt werden. Es gilt ausschließlich die neue Methode (zentraler Server).
-
-Auch die Hinweise zum Checkout-Test über Port 3000 und zum separaten Start von customer-checkout sind zu entfernen oder zu aktualisieren – stattdessen ist auf den neuen Pfad (http://localhost:4000/purchase/demo-purchase.html) zu verweisen.
 
 ---
 
