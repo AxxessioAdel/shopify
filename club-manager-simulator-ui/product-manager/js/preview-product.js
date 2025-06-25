@@ -3,7 +3,9 @@
 // Produkte laden und anzeigen
 async function loadProducts() {
   try {
-    const response = await fetch("http://localhost:3001/api/products");
+    const response = await fetch(
+      "http://localhost:4000/api/product-sync/api/products"
+    );
     const result = await response.json();
     let products = [];
     if (Array.isArray(result.products)) {

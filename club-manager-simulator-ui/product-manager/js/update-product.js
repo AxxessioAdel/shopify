@@ -6,7 +6,9 @@ let selectedProductId = null;
 async function loadProducts() {
   //   console.log("From update-product.js: buildPayloadFromForm called");
   try {
-    const response = await fetch("http://localhost:3001/api/products");
+    const response = await fetch(
+      "http://localhost:4000/api/product-sync/api/products"
+    );
     const result = await response.json();
 
     // console.log("API result:", result);
@@ -45,7 +47,7 @@ async function loadProducts() {
 async function loadProductDetails(productId) {
   try {
     const response = await fetch(
-      `http://localhost:3001/api/products/${productId}`
+      `http://localhost:4000/api/product-sync/api/products/${productId}`
     );
     if (!response.ok) {
       showMessage("Produkt nicht gefunden (404).", "error");
@@ -133,7 +135,7 @@ document.getElementById("saveButton").addEventListener("click", async () => {
 
   try {
     const response = await fetch(
-      `http://localhost:3001/api/products/${selectedProductId}`,
+      `http://localhost:4000/api/product-sync/api/products/${selectedProductId}`,
       {
         method: "PUT",
         headers: { "Content-Type": "application/json" },

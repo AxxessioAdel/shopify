@@ -39,11 +39,14 @@ document.getElementById("sendButton").addEventListener("click", async () => {
   //   console.log("🔄 Sende Produktdaten an Webhook:", latestPayload);
 
   try {
-    const response = await fetch("http://localhost:3002/simulate-webhook", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(latestPayload),
-    });
+    const response = await fetch(
+      "http://localhost:4000/api/product-sync/api/product-provisioning",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(latestPayload),
+      }
+    );
 
     const result = await response.json();
     // console.log("✅ Webhook erfolgreich ausgelöst:", result);
@@ -110,13 +113,10 @@ function buildPayloadFromForm() {
     });
 
   const image = document.getElementById("image").value;
-
   if (!image) {
     showMessage("Image URL is required.", "error");
     return null;
   }
-
-  //   console.log("image:", image);
 
   return {
     title,
@@ -124,7 +124,7 @@ function buildPayloadFromForm() {
     vendor,
     product_type,
     tags,
-    image,
+    images: [{ src: image }],
     pricing_groups: pricingGroups,
   };
 }

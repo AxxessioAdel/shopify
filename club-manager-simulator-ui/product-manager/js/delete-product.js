@@ -3,7 +3,9 @@
 // Produktliste laden und Select-Box füllen
 async function loadProducts() {
   try {
-    const response = await fetch("http://localhost:3001/api/products");
+    const response = await fetch(
+      "http://localhost:4000/api/product-sync/api/products"
+    );
     const result = await response.json();
     const select = document.getElementById("productSelect");
     select.innerHTML = "";
@@ -73,7 +75,7 @@ async function onProductSelectChange() {
   }
   try {
     const response = await fetch(
-      `http://localhost:3001/api/products/${productId}`
+      `http://localhost:4000/api/product-sync/api/products/${productId}`
     );
     if (!response.ok) {
       showMessage("Produkt nicht gefunden.", "error");
@@ -102,7 +104,7 @@ async function deleteProduct() {
   }
   try {
     const response = await fetch(
-      `http://localhost:3001/api/products/${productId}`,
+      `http://localhost:4000/api/product-sync/api/products/${productId}`,
       {
         method: "DELETE",
       }

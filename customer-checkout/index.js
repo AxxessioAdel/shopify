@@ -11,17 +11,30 @@ dotenv.config();
 const app = express();
 app.use(cors());
 app.use(express.json());
-// حذف یا کامنت کردن static middleware مربوط به public
+// Entfernen oder Auskommentieren des Static-Middleware für das public-Verzeichnis
 // app.use(express.static("public"));
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const staticRoot = path.join(__dirname, "../customer-checkout-ui");
+// Serve static files from the correct UI directory for /purchase/create-customer.html
+const staticRoot = path.join(
+  __dirname,
+  "../club-manager-simulator-ui/purchase"
+);
 console.log("[Debug] Static root:", staticRoot);
 app.use(express.static(staticRoot));
 
-// اضافه کردن checkoutRouter برای هندل کردن /api/checkout
-app.use("/api", checkoutRouter);
+// Add a development CSP header to allow inline styles (for local testing only)
+app.use((req, res, next) => {
+  res.setHeader(
+    "Content-Security-Policy",
+    "default-src *; script-src 'self' 'unsafe-inline' *; style-src 'self' 'unsafe-inline' *"
+  );
+  next();
+});
+
+// Füge checkoutRouter hinzu, um alle /checkout Endpunkte مستقیم فعال باشد
+app.use("/", checkoutRouter);
 
 const ADMIN_TOKEN = process.env.CUSTOM_CHECKOUT_APP_ADMIN_API_TOKEN;
 const SHOP_DOMAIN = process.env.SHOPIFY_STORE_DOMAIN;
@@ -155,21 +168,5 @@ app.post("/api/createCustomer", async (req, res) => {
   }
 });
 
-const server = app.listen(PORT, () => {
-  console.log(`✅ Backend läuft auf http://localhost:${PORT}`);
-});
-
-// Handle unhandled rejections and exceptions
-process.on("unhandledRejection", (reason, promise) => {
-  console.error("❌ Unhandled Rejection at:", promise, "reason:", reason);
-  // Optional: Send the error to a monitoring service
-});
-
-process.on("uncaughtException", (error) => {
-  console.error("❌ Uncaught Exception:", error);
-  // Optional: Send the error to a monitoring service
-  // Exit the process after logging the error
-  server.close(() => {
-    process.exit(1);
-  });
-});
+// Remove server start logic and export as router
+export default app;

@@ -145,7 +145,8 @@ app.put("/api/products/:id", async (req, res) => {
           method: "GET",
           headers: {
             "Content-Type": CONTENT_TYPE,
-            "X-Shopify-Access-Token": PRODUCT_PROVISIONING_SERVICE_ADMIN_API_TOKEN,
+            "X-Shopify-Access-Token":
+              PRODUCT_PROVISIONING_SERVICE_ADMIN_API_TOKEN,
           },
         }
       );
@@ -159,7 +160,8 @@ app.put("/api/products/:id", async (req, res) => {
               method: "DELETE",
               headers: {
                 "Content-Type": CONTENT_TYPE,
-                "X-Shopify-Access-Token": PRODUCT_PROVISIONING_SERVICE_ADMIN_API_TOKEN,
+                "X-Shopify-Access-Token":
+                  PRODUCT_PROVISIONING_SERVICE_ADMIN_API_TOKEN,
               },
             }
           );
@@ -172,7 +174,8 @@ app.put("/api/products/:id", async (req, res) => {
           method: "POST",
           headers: {
             "Content-Type": CONTENT_TYPE,
-            "X-Shopify-Access-Token": PRODUCT_PROVISIONING_SERVICE_ADMIN_API_TOKEN,
+            "X-Shopify-Access-Token":
+              PRODUCT_PROVISIONING_SERVICE_ADMIN_API_TOKEN,
           },
           body: JSON.stringify({ image: { src: newImageSrc } }),
         }
@@ -186,8 +189,34 @@ app.put("/api/products/:id", async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(
-    `Product Synchronization Backend running on http://localhost:${PORT}`
-  );
+// API Endpoint: Produkt löschen (DELETE)
+app.delete("/api/products/:id", async (req, res) => {
+  const productId = req.params.id;
+  try {
+    const response = await fetch(
+      `https://${SHOPIFY_STORE_DOMAIN}/admin/api/2025-04/products/${productId}.json`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": CONTENT_TYPE,
+          "X-Shopify-Access-Token":
+            PRODUCT_PROVISIONING_SERVICE_ADMIN_API_TOKEN,
+        },
+      }
+    );
+    if (response.ok) {
+      res.status(200).json({ success: true });
+    } else {
+      const errorData = await response.json();
+      res.status(response.status).json({ success: false, error: errorData });
+    }
+  } catch (err) {
+    console.error("Fehler beim Löschen des Produkts:", err);
+    res
+      .status(500)
+      .json({ success: false, error: "Fehler beim Löschen des Produkts" });
+  }
 });
+
+// Remove server start logic and export as router
+export default app;
