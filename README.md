@@ -421,71 +421,59 @@ Diese Struktur ermöglicht eine präzise Vergleichbarkeit, Testbarkeit und besse
 
 ---
 
-## 🚀 Server starten
+## 🚀 Server starten (Neue Struktur)
 
-Um die verschiedenen Server-Komponenten des Projekts zu starten, verwenden Sie die folgenden Befehle:
+Nach der Integration aller Module in einen zentralen Server erfolgt der Projektstart wie folgt:
 
-- **Club Manager Simulator starten:**
-  ```
-  npm run start:club
-  ```
-- **Customer Checkout Backend starten:**
-  ```
-  npm run start:checkout
-  ```
-- **Product Synchronization Backend starten:**
-  ```
-  npm run start:productsync
-  ```
+1. Setzen Sie den gewünschten Port als Umgebungsvariable (z.B. 4000) und starten Sie den Server:
 
-Jeder Befehl startet den jeweiligen Server auf dem in der `.env`-Datei konfigurierten Port.
+```powershell
+$env:CLUB_MANAGER_PORT=4000; node ./club-manager-simulator/server-central.js
+```
+
+2. Für öffentliche Webhook-Tests öffnen Sie einen Tunnel mit ngrok:
+
+```powershell
+ngrok http 4000
+```
+
+Nun sind alle APIs und HTML-Seiten über diesen zentralen Server erreichbar.
 
 ---
 
-### 📝 Aufgaben der einzelnen Server
+### 📝 Zugriff auf HTML-Seiten und neue Pfade
 
-- **Club Manager Simulator**
+Alle HTML-Dateien des Projekts sind jetzt über folgende (bzw. ähnliche) Pfade erreichbar:
 
-  - Simuliert das Verhalten des Club Manager-Systems.
-  - Sendet Testdaten und Webhooks an die anderen Komponenten.
-  - Dient zur lokalen Entwicklung und zum Testen der Integration.
+- http://localhost:4000/purchase/create-customer.html
+- http://localhost:4000/purchase/demo-purchase.html
+- http://localhost:4000/product-manager/index.html
+- http://localhost:4000/product-manager/create-product.html
+- http://localhost:4000/product-manager/update-product.html
+- http://localhost:4000/product-manager/delete-product.html
+- http://localhost:4000/product-manager/preview-product.html
 
-- **Customer Checkout Backend**
+> Hinweis: Die Pfade orientieren sich an den Unterordnern in `club-manager-simulator-ui` und werden alle vom zentralen Server bereitgestellt.
 
-  - Stellt eine API für den Kunden-Checkout-Prozess bereit.
-  - Verwaltet die Erstellung von Kunden, Warenkörben und Checkout-Links.
-  - Kommuniziert mit Shopify über die Storefront API.
+---
 
-#### 🛒 Testkauf über das Demo-Frontend
+### 🛒 Testen von Checkout und weiteren Funktionen
 
-Um den Checkout-Prozess zu testen, steht eine Beispielseite zur Verfügung:
+Um Checkout und andere Funktionen zu testen, genügt es, den zentralen Server zu starten und die gewünschten Seiten im Browser zu öffnen. Es ist kein separater Start mehrerer Server oder die Nutzung verschiedener Ports nötig.
 
-1. **Server starten:**  
-   Starten Sie das Customer Checkout Backend mit
+---
 
-   ```
-   npm run start:checkout
-   ```
+## Entfernen und Ersetzen alter Abschnitte
 
-   (Standard-Port: 3000, siehe `.env`)
+Die folgenden Abschnitte zur separaten Ausführung der einzelnen Server (npm run start:...) und zu alten Ports müssen entfernt werden. Es gilt ausschließlich die neue Methode (zentraler Server).
 
-2. **Demo-Seite aufrufen:**  
-   Öffnen Sie im Browser
+Auch die Hinweise zum Checkout-Test über Port 3000 und zum separaten Start von customer-checkout sind zu entfernen oder zu aktualisieren – stattdessen ist auf den neuen Pfad (http://localhost:4000/purchase/demo-purchase.html) zu verweisen.
 
-   ```
-   http://localhost:3000/demo-purchase.html
-   ```
+---
 
-3. **Formular ausfüllen:**  
-   Geben Sie die erforderlichen Kundendaten und eine Variant-ID ein.
+## Zusammenfassung der Änderungen
 
-4. **Kauf abschließen:**  
-   Nach Klick auf „Kaufen“ wird ein Test-Checkout über die Shopify Storefront API durchgeführt.  
-   Sie werden automatisch zum generierten Checkout-Link weitergeleitet.
-
-> Diese Seite dient ausschließlich zu Test- und Entwicklungszwecken.
-
-- **Product Synchronization Backend**
-  - Synchronisiert Produkte zwischen Club Manager und Shopify.
-  - Empfängt Webhooks vom Club Manager und erstellt/aktualisiert Produkte in Shopify.
-  - Dient als Bindeglied für die Produktbereitstellung.
+- Alle Module werden über einen zentralen Server (`server-central.js`) ausgeführt
+- Zugriff auf sämtliche APIs und HTML-Seiten über einen Port und einen Server
+- Kein separater Start von customer-checkout und product-synchronization mehr nötig
+- Vereinfachtes Testen und Entwickeln des Projekts
