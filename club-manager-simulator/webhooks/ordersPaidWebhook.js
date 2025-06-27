@@ -6,7 +6,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const router = express.Router();
-const isDebug = process.env.DEBUG === "true";
+const isDebug = process.env.DEBUG_MODE === "true";
 
 // Diesen Schlüssel musst du aus den App-Einstellungen in Shopify erhalten
 const SHOPIFY_WEBHOOK_SECRET = process.env.SHOPIFY_WEBHOOK_SECRET;

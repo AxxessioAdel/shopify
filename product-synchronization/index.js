@@ -12,10 +12,9 @@ const CONTENT_TYPE = process.env.CONTENT_TYPE;
 const PRODUCT_PROVISIONING_SERVICE_ADMIN_API_TOKEN =
   process.env.PRODUCT_PROVISIONING_SERVICE_ADMIN_API_TOKEN;
 const SHOPIFY_STORE_DOMAIN = process.env.SHOPIFY_STORE_DOMAIN;
-const PORT = process.env.INTEGRATION_BACKEND_PORT;
 const isDebugMode = process.env.DEBUG_MODE === "true";
 
-const isDebugLevelInfo = process.env.DEBUG_LEVEL === "info";
+const isDebugLevelInfo = process.env.DEBUG_MODE === "true";
 if (isDebugLevelInfo) {
   console.log(
     "[Debug] Product Provisioning Service loaded with debug level info"
@@ -26,7 +25,6 @@ if (isDebugLevelInfo) {
     PRODUCT_PROVISIONING_SERVICE_ADMIN_API_TOKEN
   );
   console.log("[Debug] CONTENT_TYPE:", CONTENT_TYPE);
-  console.log("[Debug] PORT:", PORT);
 }
 
 const app = express();

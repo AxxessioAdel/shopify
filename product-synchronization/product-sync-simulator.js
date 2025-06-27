@@ -1,4 +1,9 @@
 import fetch from "node-fetch";
+import dotenv from "dotenv";
+dotenv.config();
+
+const CONTENT_TYPE = process.env.CONTENT_TYPE;
+const PROVISIONING_API_URL = process.env.PROVISIONING_API_URL;
 
 async function simulateProductSync() {
   const testPayload = {
@@ -20,14 +25,11 @@ async function simulateProductSync() {
   };
 
   try {
-    const response = await fetch(
-      "http://localhost:3001/api/product-provisioning",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(testPayload),
-      }
-    );
+    const response = await fetch(PROVISIONING_API_URL, {
+      method: "POST",
+      headers: { "Content-Type": CONTENT_TYPE },
+      body: JSON.stringify(testPayload),
+    });
 
     const result = await response.json();
     console.log("✅ Simulation erfolgreich:", JSON.stringify(result, null, 2));

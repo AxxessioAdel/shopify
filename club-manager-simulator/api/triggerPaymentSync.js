@@ -15,7 +15,7 @@ export default async function triggerPaymentSync() {
     const results = [];
     for (const order of paidOrders) {
       // Annahme: clubManagerApiClient hat eine Methode zum Senden der Bestellung
-      // استفاده از نام صحیح تابع export شده
+      // Verwendung des korrekten exportierten Funktionsnamens
       const res = await clubManagerApiClient.sendeBezahlteBestellung(order);
       console.log(chalk.yellow(`[ClubManager] Antwort: ${res.status || res}`));
       results.push({ orderId: order.id, status: res.status });

@@ -7,7 +7,7 @@ const PRODUCT_PROVISIONING_SERVICE_ADMIN_API_TOKEN =
   process.env.PRODUCT_PROVISIONING_SERVICE_ADMIN_API_TOKEN;
 const SHOPIFY_STORE_DOMAIN = process.env.SHOPIFY_STORE_DOMAIN;
 
-const isDebugLevelInfo = process.env.DEBUG_LEVEL === "info";
+const isDebugLevelInfo = process.env.DEBUG_MODE === "true";
 if (isDebugLevelInfo) {
   console.log(
     "[Debug] Product Provisioning Service loaded with debug level info"

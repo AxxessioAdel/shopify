@@ -4,8 +4,7 @@ dotenv.config();
 
 const CONTENT_TYPE = process.env.CONTENT_TYPE;
 const CUSTOM_CHECKOUT_APP_TOKEN = process.env.CUSTOM_CHECKOUT_APP_TOKEN;
-
-const isDebugLevelInfo = process.env.DEBUG_LEVEL === "info";
+const isDebugLevelInfo = process.env.DEBUG_MODE === "true";
 if (isDebugLevelInfo) {
   console.log("[Debug] Shopify API Client loaded with debug level info");
   console.log("[Debug] CONTENT_TYPE:", CONTENT_TYPE);
@@ -24,7 +23,10 @@ export async function createCart() {
     }
   `;
   const body = JSON.stringify({ query });
-  console.log("[createCart] Request body:", body);
+  if (isDebugLevelInfo) {
+    console.log("[createCart] Sending request to Shopify API");
+    console.log("[createCart] Request body:", body);
+  }
   const response = await fetch(
     "https://vrr7x3-ab.myshopify.com/api/2024-04/graphql.json",
     {
@@ -73,7 +75,9 @@ export async function addProductToCart(cartId, merchandiseId, attributes = []) {
     ],
   };
   const body = JSON.stringify({ query, variables });
-  console.log("[addProductToCart] Request body:", body);
+  if (isDebugLevelInfo) {
+    console.log("[addProductToCart] Request body:", body);
+  }
   const response = await fetch(
     "https://vrr7x3-ab.myshopify.com/api/2024-04/graphql.json",
     {
@@ -98,6 +102,7 @@ export async function addProductToCart(cartId, merchandiseId, attributes = []) {
 }
 
 export async function getCheckoutUrl(cartId) {
+  // Standardfall: Nur checkoutUrl aus dem Cart abfragen
   const query = `
     query getCart($cartId: ID!) {
       cart(id: $cartId) {
@@ -107,7 +112,9 @@ export async function getCheckoutUrl(cartId) {
   `;
   const variables = { cartId };
   const body = JSON.stringify({ query, variables });
-  console.log("[getCheckoutUrl] Request body:", body);
+  if (isDebugLevelInfo) {
+    console.log("[getCheckoutUrl] Request body:", body);
+  }
   const response = await fetch(
     "https://vrr7x3-ab.myshopify.com/api/2024-04/graphql.json",
     {

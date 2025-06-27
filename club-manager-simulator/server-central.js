@@ -16,10 +16,10 @@ import triggerPaymentSync from "./api/triggerPaymentSync.js";
 dotenv.config();
 
 const app = express();
-const PORT = process.env.CLUB_MANAGER_PORT || 3000;
 const CONTENT_TYPE = process.env.CONTENT_TYPE;
 const USE_API_SYNC = process.env.USE_API_SYNC === "true";
-const DEBUG_LEVEL = process.env.DEBUG_LEVEL?.trim() === "info";
+const DEBUG_MODE = process.env.DEBUG_MODE?.trim() === "true";
+const PORT = process.env.CREATE_CREATE_PORT_PROTOYPE;
 
 // CORS support
 app.use(cors());
@@ -45,7 +45,7 @@ app.use(
   "/",
   express.static(path.join(__dirname, "../club-manager-simulator-ui"))
 );
-if (DEBUG_LEVEL) {
+if (DEBUG_MODE) {
   console.log(
     chalk.gray(
       `[Debug] Static root: ${path.join(
@@ -58,15 +58,15 @@ if (DEBUG_LEVEL) {
 
 // Mount customer-checkout as /api/checkout
 app.use("/api/checkout", checkoutRouter);
-if (DEBUG_LEVEL) console.log(chalk.cyan("[Checkout] gestartet"));
+if (DEBUG_MODE) console.log(chalk.cyan("[Checkout] gestartet"));
 
 // Mount product-synchronization as /api/product-sync
 app.use("/api/product-sync", productSyncRouter);
-if (DEBUG_LEVEL) console.log(chalk.cyan("[ProductSync] gestartet"));
+if (DEBUG_MODE) console.log(chalk.cyan("[ProductSync] gestartet"));
 
 // Mount payment confirmation as /api/payments
 app.use("/api/payments", paymentConfirmationRouter);
-if (DEBUG_LEVEL) console.log(chalk.cyan("[Payments] gestartet"));
+if (DEBUG_MODE) console.log(chalk.cyan("[Payments] gestartet"));
 
 // Mount webhooks
 app.use("/webhooks", ordersPaidWebhook);

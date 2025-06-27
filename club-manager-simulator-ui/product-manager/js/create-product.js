@@ -1,4 +1,10 @@
 // create-product.js
+// Entfernen von dotenv und Verwendung von festen Werten für CONTENT_TYPE und PORT
+// import dotenv from "dotenv";
+// dotenv.config();
+
+const CONTENT_TYPE = "application/json";
+const PORT = 4000; // Oder ein geeigneter Wert für Ihren zentralen Server
 
 let latestPayload = null;
 
@@ -40,10 +46,10 @@ document.getElementById("sendButton").addEventListener("click", async () => {
 
   try {
     const response = await fetch(
-      "http://localhost:4000/api/product-sync/api/product-provisioning",
+      `http://localhost:${PORT}/api/product-sync/api/product-provisioning`,
       {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": CONTENT_TYPE },
         body: JSON.stringify(latestPayload),
       }
     );

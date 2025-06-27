@@ -1,18 +1,17 @@
 import axios from "axios";
 import dotenv from "dotenv";
-
 dotenv.config();
 
-// Admin API Konfiguration
+const CONTENT_TYPE = process.env.CONTENT_TYPE;
 const SHOPIFY_API_URL = `https://${process.env.SHOPIFY_STORE_DOMAIN}/admin/api/2025-04/webhooks.json`;
 const SHOPIFY_ADMIN_API_TOKEN = process.env.CUSTOM_CHECKOUT_APP_ADMIN_API_TOKEN;
+const WEBHOOK_ADDRESS = process.env.WEBHOOK_ADDRESS;
+const isDebug = process.env.DEBUG_MODE === "true";
 
-// Print the token for debugging purposes
-console.log("[DEBUG] SHOPIFY_ADMIN_API_TOKEN:", SHOPIFY_ADMIN_API_TOKEN);
-
-// Webhook-Endpunkt (Platzhalter, später dynamisch anpassen)
-const WEBHOOK_ADDRESS =
-  "https://6632-2a02-908-390-db80-3d5c-3450-6ab8-329f.ngrok-free.app/webhooks/orders-paid";
+if (isDebug) {
+  console.log("*** From registerWebhook.js ***");
+  console.log("[DEBUG] SHOPIFY_ADMIN_API_TOKEN:", SHOPIFY_ADMIN_API_TOKEN);
+}
 
 async function registerWebhook() {
   console.debug(
@@ -31,7 +30,7 @@ async function registerWebhook() {
     const response = await axios.post(SHOPIFY_API_URL, payload, {
       headers: {
         "X-Shopify-Access-Token": SHOPIFY_ADMIN_API_TOKEN,
-        "Content-Type": "application/json",
+        "Content-Type": CONTENT_TYPE,
       },
     });
     console.debug("[Webhook-Registrierung] Antwortstatus:", response.status);

@@ -1,6 +1,8 @@
-import dotenv from "dotenv";
 import fetch from "node-fetch";
+import dotenv from "dotenv";
 dotenv.config();
+
+const CONTENT_TYPE = process.env.CONTENT_TYPE;
 
 export async function handleProductSync(req, res) {
   try {
@@ -93,7 +95,7 @@ export async function handleProductSync(req, res) {
       {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": CONTENT_TYPE,
           "X-Shopify-Access-Token": shopifyToken,
         },
         body: JSON.stringify(mappedProduct),

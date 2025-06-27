@@ -1,15 +1,12 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-const PORT = process.env.CUSTOM_CHECKOUT_PORT;
 const CONTENT_TYPE = process.env.CONTENT_TYPE;
 
-const isDebugLevelInfo = process.env.DEBUG_LEVEL === "info";
+const isDebugLevelInfo = process.env.DEBUG_MODE === "true";
 if (isDebugLevelInfo) {
   console.log("[Debug] Customer Checkout loaded with debug level info");
-  console.log("[Debug] PORT:", PORT);
   console.log("[Debug] CONTENT_TYPE:", CONTENT_TYPE);
-  console.log("[Debug] CUSTOM_CHECKOUT_PORT:", PORT);
 }
 
 document.addEventListener("DOMContentLoaded", () => {

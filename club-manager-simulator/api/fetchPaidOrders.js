@@ -9,7 +9,7 @@ const CUSTOM_CHECKOUT_APP_ADMIN_API_TOKEN =
   process.env.CUSTOM_CHECKOUT_APP_ADMIN_API_TOKEN;
 const SHOPIFY_STORE_DOMAIN = process.env.SHOPIFY_STORE_DOMAIN;
 
-const isDebugLevelInfo = process.env.DEBUG_LEVEL === "info";
+const isDebugLevelInfo = process.env.DEBUG_MODE === "true";
 if (isDebugLevelInfo) {
   console.log("[Debug] fetchPaidOrders loaded with debug level info");
   console.log("[Debug] SHOPIFY_STORE_DOMAIN:", SHOPIFY_STORE_DOMAIN);

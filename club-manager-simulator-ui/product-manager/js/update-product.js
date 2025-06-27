@@ -1,4 +1,10 @@
 // update-product.js
+// Entfernen von dotenv und Verwendung von festen Werten für PORT und CONTENT_TYPE
+// import dotenv from "dotenv";
+// dotenv.config();
+
+const PORT = 4000; // Oder ein geeigneter Wert für Ihren zentralen Server
+const CONTENT_TYPE = "application/json";
 
 let latestPayload = null;
 let selectedProductId = null;
@@ -7,7 +13,7 @@ async function loadProducts() {
   //   console.log("From update-product.js: buildPayloadFromForm called");
   try {
     const response = await fetch(
-      "http://localhost:4000/api/product-sync/api/products"
+      `http://localhost:${PORT}/api/product-sync/api/products`
     );
     const result = await response.json();
 
@@ -47,7 +53,7 @@ async function loadProducts() {
 async function loadProductDetails(productId) {
   try {
     const response = await fetch(
-      `http://localhost:4000/api/product-sync/api/products/${productId}`
+      `http://localhost:${PORT}/api/product-sync/api/products/${productId}`
     );
     if (!response.ok) {
       showMessage("Produkt nicht gefunden (404).", "error");
@@ -135,10 +141,10 @@ document.getElementById("saveButton").addEventListener("click", async () => {
 
   try {
     const response = await fetch(
-      `http://localhost:4000/api/product-sync/api/products/${selectedProductId}`,
+      `http://localhost:${PORT}/api/product-sync/api/products/${selectedProductId}`,
       {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": CONTENT_TYPE },
         body: JSON.stringify(latestPayload),
       }
     );

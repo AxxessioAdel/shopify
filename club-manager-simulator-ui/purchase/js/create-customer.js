@@ -1,4 +1,9 @@
 // create-customer.js (browser version)
+// Entfernen von dotenv und Verwendung eines festen Werts für Content-Type
+// import dotenv from "dotenv";
+// dotenv.config();
+
+const CONTENT_TYPE = "application/json";
 
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("customer-form");
@@ -22,7 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       const response = await fetch("/api/checkout/api/createCustomer", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": CONTENT_TYPE },
         body: JSON.stringify(payload),
       });
 

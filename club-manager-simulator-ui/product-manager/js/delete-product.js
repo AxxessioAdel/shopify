@@ -1,10 +1,12 @@
 // delete-product.js
 
+const PORT = 4000; // oder der passende Port für deine Server-Konfiguration
+
 // Produktliste laden und Select-Box füllen
 async function loadProducts() {
   try {
     const response = await fetch(
-      "http://localhost:4000/api/product-sync/api/products"
+      `http://localhost:${PORT}/api/product-sync/api/products`
     );
     const result = await response.json();
     const select = document.getElementById("productSelect");
@@ -75,7 +77,7 @@ async function onProductSelectChange() {
   }
   try {
     const response = await fetch(
-      `http://localhost:4000/api/product-sync/api/products/${productId}`
+      `http://localhost:${PORT}/api/product-sync/api/products/${productId}`
     );
     if (!response.ok) {
       showMessage("Produkt nicht gefunden.", "error");
@@ -104,7 +106,7 @@ async function deleteProduct() {
   }
   try {
     const response = await fetch(
-      `http://localhost:4000/api/product-sync/api/products/${productId}`,
+      `http://localhost:${PORT}/api/product-sync/api/products/${productId}`,
       {
         method: "DELETE",
       }

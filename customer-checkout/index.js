@@ -16,7 +16,7 @@ app.use(express.json());
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-// Serve static files from the correct UI directory for /purchase/create-customer.html
+// Statische Dateien aus dem richtigen UI-Verzeichnis für /purchase/create-customer.html bereitstellen
 const staticRoot = path.join(
   __dirname,
   "../club-manager-simulator-ui/purchase"
@@ -24,7 +24,7 @@ const staticRoot = path.join(
 console.log("[Debug] Static root:", staticRoot);
 app.use(express.static(staticRoot));
 
-// Add a development CSP header to allow inline styles (for local testing only)
+// Entwicklungs-CSP-Header hinzufügen, um Inline-Styles zu erlauben (nur für lokale Tests)
 app.use((req, res, next) => {
   res.setHeader(
     "Content-Security-Policy",
@@ -33,18 +33,16 @@ app.use((req, res, next) => {
   next();
 });
 
-// Füge checkoutRouter hinzu, um alle /checkout Endpunkte مستقیم فعال باشد
+// checkoutRouter hinzufügen, um alle /checkout Endpunkte direkt zu aktivieren
 app.use("/", checkoutRouter);
 
 const ADMIN_TOKEN = process.env.CUSTOM_CHECKOUT_APP_ADMIN_API_TOKEN;
 const SHOP_DOMAIN = process.env.SHOPIFY_STORE_DOMAIN;
 const CONTENT_TYPE = process.env.CONTENT_TYPE;
-const PORT = process.env.CUSTOM_CHECKOUT_PORT;
 
-const isDebugLevelInfo = process.env.DEBUG_LEVEL === "info";
+const isDebugLevelInfo = process.env.DEBUG_MODE === "true";
 if (isDebugLevelInfo) {
   console.log("[Debug] Customer Checkout loaded with debug level info");
-  console.log("[Debug] PORT:", PORT);
   console.log("[Debug] SHOP_DOMAIN:", SHOP_DOMAIN);
   console.log("[Debug] CONTENT_TYPE:", CONTENT_TYPE);
   console.log("[Debug] ADMIN_TOKEN:", ADMIN_TOKEN);
@@ -168,5 +166,5 @@ app.post("/api/createCustomer", async (req, res) => {
   }
 });
 
-// Remove server start logic and export as router
+// Entfernen Sie die Serverstart-Logik und exportieren Sie als Router
 export default app;

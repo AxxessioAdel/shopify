@@ -1,10 +1,11 @@
 // preview-product.js
+const PORT = 4000; // oder ein anderer geeigneter Wert für Ihren zentralen Server
 
 // Produkte laden und anzeigen
 async function loadProducts() {
   try {
     const response = await fetch(
-      "http://localhost:4000/api/product-sync/api/products"
+      `http://localhost:${PORT}/api/product-sync/api/products`
     );
     const result = await response.json();
     let products = [];

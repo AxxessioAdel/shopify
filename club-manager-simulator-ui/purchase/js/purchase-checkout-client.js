@@ -1,5 +1,5 @@
 // This script handles the checkout form submission in the browser and calls the backend API
-
+// ...existing code from checkout-client.js...
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("checkout-form");
   form.addEventListener("submit", async (e) => {

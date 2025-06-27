@@ -8,14 +8,12 @@ dotenv.config();
 const app = express();
 
 // Lade Umgebungsvariablen
-const PORT = process.env.CLUB_MANAGER_PORT;
 const PROVISIONING_API_URL = process.env.PROVISIONING_API_URL;
 const CONTENT_TYPE = process.env.CONTENT_TYPE;
-
-const isDebugLevelInfo = process.env.DEBUG_LEVEL === "info";
+const PORT = process.env.CREATE_CREATE_PORT;
+const isDebugLevelInfo = process.env.DEBUG_MODE === "true";
 if (isDebugLevelInfo) {
-  console.log("[Debug] Club Manager Simulator loaded with debug level info");
-  console.log("[Debug] PORT:", PORT);
+  console.log("*** From club-manager-simulator/index.js ***");
   console.log("[Debug] PROVISIONING_API_URL:", PROVISIONING_API_URL);
   console.log("[Debug] CONTENT_TYPE:", CONTENT_TYPE);
 }

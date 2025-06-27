@@ -7,13 +7,11 @@ import {
 import dotenv from "dotenv";
 
 dotenv.config();
-const PORT = process.env.CUSTOM_CHECKOUT_PORT;
 const CONTENT_TYPE = process.env.CONTENT_TYPE;
 
-const isDebugLevelInfo = process.env.DEBUG_LEVEL === "info";
+const isDebugLevelInfo = process.env.DEBUG_MODE === "true";
 if (isDebugLevelInfo) {
   console.log("[Debug] Customer Checkout loaded with debug level info");
-  console.log("[Debug] PORT:", PORT);
   console.log("[Debug] CONTENT_TYPE:", CONTENT_TYPE);
 }
 
@@ -39,7 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // 1. Kunden erstellen
     const customerResponse = await fetch(
-      `http://localhost:${PORT}/api/createCustomer`,
+      `http://localhost/api/createCustomer`,
       {
         method: "POST",
         headers: { "Content-Type": CONTENT_TYPE },

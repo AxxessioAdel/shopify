@@ -1,35 +1,37 @@
 // Aufgabe: Holt bezahlte Bestellungen von der Shopify Admin API
 import fetch from "node-fetch";
 import dotenv from "dotenv";
-
 dotenv.config();
 
+const CONTENT_TYPE = process.env.CONTENT_TYPE;
+const SHOP = process.env.SHOPIFY_SHOP;
+const ACCESS_Token = process.env.CUSTOM_CHECKOUT_APP_ADMIN_API_TOKEN;
 /**
  * Holt bezahlte Bestellungen von Shopify
  * @returns {Promise<Array>} Array der bezahlten Bestellungen
  */
 export default async function fetchPaidOrders() {
-  const shop = process.env.SHOPIFY_SHOP;
-  const accessToken = process.env.CUSTOM_CHECKOUT_APP_ADMIN_API_TOKEN;
-
   console.log("[Debug] fetchPaidOrders aufgerufen");
-  console.log("[Debug] SHOPIFY_SHOP:", shop);
-  console.log("[Debug] CUSTOM_CHECKOUT_APP_ADMIN_API_TOKEN:", accessToken);
+  console.log("[Debug] SHOPIFY_SHOP:", SHOP);
+  console.log("[Debug] CUSTOM_CHECKOUT_APP_ADMIN_API_TOKEN:", ACCESS_Token);
 
-  if (!shop || !accessToken) {
-    console.error("[Error] Shopify credentials missing", { shop, accessToken });
+  if (!SHOP || !ACCESS_Token) {
+    console.error("[Error] Shopify credentials missing", {
+      shop: SHOP,
+      accessToken: ACCESS_Token,
+    });
     throw new Error("Shopify credentials missing");
   }
 
-  const url = `https://${shop}/admin/api/2025-04/orders.json?financial_status=paid&status=any&fields=id,email,total_price,processed_at,line_items`;
+  const url = `https://${SHOP}/admin/api/2025-04/orders.json?financial_status=paid&status=any&fields=id,email,total_price,processed_at,line_items`;
   console.log("[Debug] Shopify Orders URL:", url);
 
   let response;
   try {
     response = await fetch(url, {
       headers: {
-        "X-Shopify-Access-Token": accessToken,
-        "Content-Type": "application/json",
+        "X-Shopify-Access-Token": ACCESS_Token,
+        "Content-Type": CONTENT_TYPE,
       },
     });
   } catch (err) {

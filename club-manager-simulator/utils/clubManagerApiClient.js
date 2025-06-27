@@ -4,9 +4,9 @@ dotenv.config();
 
 // URL des Club Manager Endpoints aus Umgebungsvariablen laden
 const CLUB_MANAGER_API_URL = process.env.CLUB_MANAGER_API_URL;
-const isDebugLevelInfo = process.env.DEBUG_LEVEL === "info";
+const isDebugLevelInfo = process.env.DEBUG_MODE === "true";
 if (isDebugLevelInfo) {
-  console.log("[Debug] Club Manager API Client loaded with debug level info");
+  console.log("[Debug] Club Manager API Client mit Debug-Level info geladen");
   console.log("[Debug] CLUB_MANAGER_API_URL:", CLUB_MANAGER_API_URL);
 }
 
