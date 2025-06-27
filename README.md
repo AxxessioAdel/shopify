@@ -471,3 +471,90 @@ Um Checkout und andere Funktionen zu testen, genügt es, den zentralen Server zu
 - Zugriff auf sämtliche APIs und HTML-Seiten über einen Port und einen Server
 - Kein separater Start von customer-checkout und product-synchronization mehr nötig
 - Vereinfachtes Testen und Entwickeln des Projekts
+
+---
+
+## 🏷️ Gutscheincodes & Rabattlogik (Shopify Discount Codes)
+
+### Überblick
+
+Dieses Projekt unterstützt die Anwendung von Shopify-Gutscheincodes (Discount Codes) direkt im Headless-Checkout-Prozess. Die Integration erfolgt vollständig über die Storefront API und ist unabhängig von Hydrogen oder Shopify-Frontend-Komponenten.
+
+### Funktionsweise
+
+- Im Checkout-Formular (`demo-purchase.html`) kann der Kunde einen Gutscheincode eingeben.
+- Der Gutscheincode wird zusammen mit den anderen Bestelldaten an das Backend übermittelt.
+- Im Backend (`customer-checkout/api/checkout.js`) wird der Code nach dem Anlegen des Warenkorbs (`createCart`) und vor dem Hinzufügen des Produkts (`addProductToCart`) per GraphQL-Mutation (`cartDiscountCodesUpdate`) auf den Warenkorb angewendet.
+- Die Anwendung des Codes wird geloggt. Bei aktivierter Umgebungsvariable `DEBUG_DISCOUNT=true` werden alle relevanten API-Antworten und Fehler detailliert im Terminal ausgegeben.
+- Nach Anwendung des Codes wird der Warenkorb erneut abgefragt, um den Status des Rabatts und die finale Preiskalkulation zu prüfen.
+
+### Beispiel für die Integration
+
+1. **Frontend:**
+
+   - Feld für Gutscheincode im Checkout-Formular:
+     ```html
+     <label for="discountCode">Gutscheincode</label>
+     <input
+       type="text"
+       id="discountCode"
+       name="discountCode"
+       placeholder="z. B. SUMMER2024"
+     />
+     ```
+   - Übergabe an das Backend via JS:
+     ```js
+     const discountCode = document.getElementById("discountCode").value.trim();
+     // ...
+     body: JSON.stringify({
+       // ...
+       discountCode,
+     });
+     ```
+
+2. **Backend:**
+   - Extraktion und Anwendung des Codes:
+     ```js
+     const { discountCode } = req.body;
+     // ...
+     if (discountCode) {
+       await applyDiscountToCart(cart.id, discountCode);
+       await getCart(cart.id); // Status nach Anwendung prüfen
+     }
+     ```
+   - Logging (nur bei aktiviertem DEBUG_DISCOUNT):
+     ```js
+     if (isDebugDiscount) {
+       console.log("[Discount][Raw Response]", ...);
+       // ...
+     }
+     ```
+
+### Hinweise zur Nutzung
+
+- Die Rabattlogik funktioniert nur, wenn der Gutscheincode zuvor im Shopify Admin unter "Rabatte" angelegt wurde.
+- Die Prüfung, ob ein Code gültig oder anwendbar ist, erfolgt direkt über die API und wird im Terminal ausgegeben.
+- Für die Aktivierung des detaillierten Loggings muss in der `.env`-Datei stehen:
+  ```
+  DEBUG_DISCOUNT=true
+  ```
+- Die gesamte Logik ist modular und kann für weitere Rabatt-Features (z.B. automatische Rabatte) erweitert werden.
+
+### Beispiel für ein Terminal-Log bei erfolgreicher Anwendung
+
+```
+[Discount][Raw Response] { ...komplette API-Antwort... }
+[Discount] Erfolgreich angewendeter Code: [ { code: 'SUMMER2024', applicable: true } ]
+[Cart][State after discount] { ...Warenkorb mit Rabatt... }
+[Checkout URL] https://.../checkouts/...?...
+```
+
+### Fehlerbehandlung
+
+- Bei ungültigen oder nicht anwendbaren Codes werden die Fehler im Terminal ausgegeben:
+  ```
+  [Discount] Fehler beim Anwenden des Codes: [ { field: ..., message: ... } ]
+  ```
+- Die Anwendung des Codes beeinflusst die Checkout-URL und die finale Preisberechnung.
+
+---

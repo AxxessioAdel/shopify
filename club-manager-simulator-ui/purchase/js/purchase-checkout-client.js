@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
       'input[name="recipient"]:checked'
     ).value;
     const variantId = document.getElementById("variantId").value.trim();
+    const discountCode = document.getElementById("discountCode").value.trim();
     if (!variantId) {
       alert("Bitte Variant-ID eingeben.");
       return;
@@ -27,6 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
           message,
           recipient,
           variantId,
+          discountCode,
         }),
       });
       const data = await response.json();
