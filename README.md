@@ -558,3 +558,69 @@ Dieses Projekt unterstützt die Anwendung von Shopify-Gutscheincodes (Discount C
 - Die Anwendung des Codes beeinflusst die Checkout-URL und die finale Preisberechnung.
 
 ---
+
+## 🛠️ Automatisierte Erstellung von Rabattregeln & Discount Codes (Admin API)
+
+### Ziel
+
+Mit dieser Erweiterung ist es möglich, Shopify-Discount-Codes (z. B. TEST5) und die zugehörigen Preisregeln (Price Rules) vollautomatisch über ein eigenes Backend-API zu erstellen – ohne manuelle Eingabe im Shopify Admin.
+
+### Funktionsweise & Ablauf
+
+1. **Neues Backend-API:**
+
+   - Ein dedizierter Endpunkt `/api/discount/create` wurde im Verzeichnis `customer-checkout/discount-api/` implementiert.
+   - Die Logik ist klar getrennt und mit deutschen Kommentaren dokumentiert.
+
+2. **Ablauf der Erstellung:**
+
+   - Das Backend sucht zunächst anhand des Produkttitels (z. B. „Digitale Autogrammkarte – Jamal Musiala“) die Produkt-ID via Shopify Admin API.
+   - Anschließend wird eine Price Rule mit folgenden Parametern erstellt:
+     - 5 % Rabatt (value: -5.0, value_type: percentage)
+     - Gültig nur für das gewünschte Produkt (entitled_product_ids)
+     - Für alle Kunden, ohne Mindestbestellwert, ohne Nutzungsbegrenzung
+     - Sofort aktiv, kein Enddatum
+   - Nach erfolgreicher Erstellung der Price Rule wird ein Discount Code (z. B. TEST5) für diese Regel angelegt.
+   - Das Ergebnis (beide Objekte) wird als JSON zurückgegeben.
+
+3. **Beispiel für einen API-Call:**
+
+   ```bash
+   curl -X POST http://localhost:4000/api/discount/create
+   ```
+
+   **Antwort:**
+
+   ```json
+   {
+     "success": true,
+     "priceRule": { ... },
+     "discountCode": { ... }
+   }
+   ```
+
+4. **Wichtige Hinweise:**
+   - Die Produktbindung erfolgt dynamisch über den Titel. Bei Änderung des Produkttitels im Shop muss der API-Call angepasst werden.
+   - Die Discount-API nutzt die Shopify Admin API (REST, Version 2025-04).
+   - Alle Schritte und Fehler werden im Backend geloggt.
+   - Die Logik ist modular und kann für weitere Rabattarten (z. B. Festbetrag, Mindestbestellwert, zeitliche Begrenzung) leicht erweitert werden.
+
+### Beispiel für die Implementierung (Ausschnitt):
+
+```js
+// Produkt-ID anhand des Titels suchen
+const productId = await getProductIdByTitle("Digitale Autogrammkarte – Jamal Musiala");
+// Price Rule anlegen
+const priceRulePayload = { ... entitled_product_ids: [productId], ... };
+// Discount Code anlegen
+const discountCodePayload = { discount_code: { code: "TEST5" } };
+```
+
+### Vorteile dieser Lösung
+
+- Keine manuelle Pflege von Rabattregeln im Shopify Admin nötig
+- Automatisierte, nachvollziehbare und wiederholbare Rabatt-Workflows
+- Klare Trennung der Rabattlogik im Backend
+- Erweiterbar für weitere Rabatt-Features
+
+---

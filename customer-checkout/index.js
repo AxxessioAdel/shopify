@@ -5,6 +5,8 @@ import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
 import checkoutRouter from "./api/checkout.js";
+// Rabatt-API für automatisches Anlegen von Price Rules & Discount Codes
+import discountApiRouter from "./discount-api/create-discount.js";
 
 dotenv.config();
 
@@ -35,6 +37,8 @@ app.use((req, res, next) => {
 
 // checkoutRouter hinzufügen, um alle /checkout Endpunkte direkt zu aktivieren
 app.use("/", checkoutRouter);
+// Rabatt-API-Endpunkte unter /api/discount verfügbar machen
+app.use("/api/discount", discountApiRouter);
 
 const ADMIN_TOKEN = process.env.CUSTOM_CHECKOUT_APP_ADMIN_API_TOKEN;
 const SHOP_DOMAIN = process.env.SHOPIFY_STORE_DOMAIN;

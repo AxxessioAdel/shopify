@@ -1,0 +1,31 @@
+@startuml
+title Purchase Flow: Club Manager ⇄ Shopify (Headless)
+
+actor User
+participant "Club Manager UI" as CMUI
+participant "Shopify Storefront (Headless)" as Shopify
+participant "Shopify Checkout Page" as Checkout
+participant "Shopify Webhook" as Webhook
+participant "Webhook Receiver (Middleware)" as Middleware
+participant "Club Manager API" as CMAPI
+
+User -> CMUI : selects product
+CMUI -> CMAPI : fetch product data (fan-card)
+CMUI -> Shopify : provision product (GraphQL / Admin API)
+CMUI -> Shopify : create checkout/cart
+User -> Shopify : redirected to checkout page
+
+User -> Checkout : views summary and inputs info
+User -> Checkout : (optional) applies discount code
+Checkout -> Shopify : apply discount code (checkoutDiscountCodeApplyV2)
+User -> Checkout : confirms and pays
+
+Shopify -> Webhook : trigger orders/paid
+Webhook -> Middleware : send order data (JSON)
+Middleware -> CMAPI : mark fan-card as paid
+
+User -> Checkout : sees confirmation screen
+User -> CMUI : clicks "Back to Club Manager" button (return URL)
+CMUI -> CMAPI : finalize purchase session
+
+@enduml
